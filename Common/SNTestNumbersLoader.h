@@ -43,10 +43,12 @@ public:
 	SNTestNumbersLoader();
 	~SNTestNumbersLoader();
 	void Load(SNTestNumbers& test_numbers, QString path, QString filename = "descr.txt");
-	void LoadSymbols(SNNumberRecognizer::ANNAlphabets& alphabets, SNANNFeatureEvaluator& eval, QString base_path, QString alphabets_path, QString filename = "alphabets_config.xml");
+	void LoadSymbols(SNNumberRecognizer::ANNAlphabets& alphabets, const QString& alph_config_filename);
+	void EvaluateFeatures(SNNumberRecognizer::ANNAlphabets& alphabets, SNANNFeatureEvaluator& eval);
+	void WarpSymbols(SNTestNumbers& numbers, double offset_warp, double scale_warp);
+
 private:
 	void Parse(const QStringList& files, SNTestNumbers& test_numbers);
-	void InitAlphabets(SNNumberRecognizer::ANNAlphabets& alphabets, QString path, QString filename = "alphabets_config.xml");
 };
 //-----------------------------------------------------------------------------
 #endif // SNTestNumbersLoader_h__

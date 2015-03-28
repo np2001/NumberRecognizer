@@ -25,7 +25,7 @@ namespace SNNumberRecognizer
 	struct ANNSymbolClassItems : public std::list<ANNClassItem>
 	{
 		char DisplaySymbol;
-		int32_t SymbolCode;
+		//int32_t SymbolCode;
 	};
 	//------------------------------------------------------------------------------
 	typedef int32_t ANNClassID;
@@ -36,7 +36,7 @@ namespace SNNumberRecognizer
 	{
 		CvANN_MLP  ANN;
 		ANNSymbolClassesMap SymbolClasses;
-		ANNSymbolClassItems NonSymbols;
+		//ANNSymbolClassItems NonSymbols;
 	};
 	//------------------------------------------------------------------------------
 	typedef std::map<AlphabetTypes, ANNAlphabet> ANNAlphabets;
@@ -48,6 +48,8 @@ namespace SNNumberRecognizer
 	//------------------------------------------------------------------------------
 	typedef std::map<AlphabetTypes, SNANNConfig> SNANNConfigMap;
 	//------------------------------------------------------------------------------
+
+	typedef std::list<cv::Mat> SNPlateList;
 
 	struct SNANNPredictionResult
 	{

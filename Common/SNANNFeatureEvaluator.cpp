@@ -44,10 +44,10 @@ cv::Mat SNANNFeatureEvaluator::Features(const cv::Mat& gray_image)
 {
 	cv::Mat low_data;
 
-	cv::resize(gray_image, low_data, cv::Size(8, 8));
+	cv::resize(gray_image, low_data, cv::Size(8, 16));
 
 	//cv::threshold(low_data, low_data, 128, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
-	cv::equalizeHist(low_data, low_data);
+	//cv::equalizeHist(low_data, low_data);
 
 	cv::Mat out = cv::Mat::zeros(1, 256, CV_32F);
 
@@ -69,13 +69,13 @@ cv::Mat SNANNFeatureEvaluator::Features(const cv::Mat& gray_image)
 			LBPBit(low_data, x + 1, y + 1, center_value, 128, value);
 
 			out.at<float>(value)++;
-			
+
 		}
 	}
 
 	return out;
 }
-//-------------------------------------------------------------------------
+//------------------------------------------------------------------------ -
 
 void SNANNFeatureEvaluator::LBPBit(const cv::Mat& low_data, int32_t x, int32_t y, const uint8_t& center_value, const uint8_t& bitmask, uint8_t& value)
 {
