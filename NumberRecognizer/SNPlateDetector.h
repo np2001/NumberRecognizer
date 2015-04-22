@@ -20,13 +20,16 @@ public:
 	void LoadCascade(const std::string& cascade);
 	
 	void Detect(const cv::Mat& image, SNPlateRects& objects);
+	void Detect(const cv::Mat& image, cv::Size min_size, cv::Size max_size);
+public:
+	float MinRelativePlateWidth;
+	float MaxRelativePlateWidth;
+	float AspectRatio;
+
 private:
 	void Init(const cv::Mat& image);
 private:
 	cv::CascadeClassifier Classifier;
-	float MinRelativePlateWidth;
-	float MaxRelativePlateWidth;
-	float AspectRatio;
 	int ImageWidth;
 	int ImageHeight;
 	cv::Size MinPlateSize;

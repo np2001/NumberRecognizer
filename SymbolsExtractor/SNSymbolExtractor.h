@@ -18,7 +18,7 @@ public:
 	~SNSymbolExtractor();
 	void Extract(const SNTestNumbers& numbers, QString in_files_path, const QString& out_path, float min_symbol_probability = 0.99, int min_symbol_height = 12);
 private:
-	void SaveExtracted(const QString& out_path, const SNNumberRecognizer::ANNSymbolClassesMap& symbols, const SNNumberRecognizer::SNPlateList& plates);
+	void SaveExtracted(const QString& out_path, SNNumberRecognizer::ANNSymbolClassesMap& symbols, const SNNumberRecognizer::SNPlateList& plates);
 };
 //------------------------------------------------------------
 #endif // SNSymbolExtractor_h__

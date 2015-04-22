@@ -23,6 +23,6 @@ call :create 20
 exit /b
 
 :create
-opencv_createsamples -info %1.dat -vec vecs/%1.vec -w 16 -h 16
+opencv_createsamples -info %1.dat -vec vecs/%1.vec -w 8 -h 16
 exit /b
 

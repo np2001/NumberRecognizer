@@ -10,7 +10,11 @@ namespace SNNumberRecognizer
 	public:
 		SNANNConfigLoader();
 		~SNANNConfigLoader();
-		void Save(const SNANNConfigMap& config);
+		std::string Save(const SNANNConfigMap& config);
+		bool Load(const char* data, SNANNConfigMap& config);
+	private:
+		std::string ToHex(std::string str);
+		std::string FromHex(std::string str);
 	};
 };
 //-------------------------------------------------------------

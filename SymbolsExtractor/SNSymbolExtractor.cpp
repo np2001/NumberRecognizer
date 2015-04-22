@@ -94,20 +94,46 @@ void SNSymbolExtractor::Extract(const SNTestNumbers& numbers, QString in_files_p
 				}
 
 				
-				if (image.cols > NON_SYMBOL_WIDTH && image.rows > NON_SYMBOL_HEIGHT)
+				for (int i = 0; i < 10; ++i)
+				if (plate.cols > NON_SYMBOL_WIDTH && plate.rows > NON_SYMBOL_HEIGHT)
 				{
-					//Выберем картинку "не символа" случайно, будем считать, что вероятность попасть на символ очень мала
-					cv::Mat non_symbol = cv::Mat(
-						image,
-						cv::Rect(
-						rand() % (image.cols - NON_SYMBOL_WIDTH),
-						rand() % (image.rows - NON_SYMBOL_HEIGHT),
-						NON_SYMBOL_WIDTH, NON_SYMBOL_HEIGHT));
+					cv::Rect random_rect = cv::Rect(
+						rand() % (plate.cols - NON_SYMBOL_WIDTH),
+						rand() % (plate.rows - NON_SYMBOL_HEIGHT),
+						NON_SYMBOL_WIDTH, NON_SYMBOL_HEIGHT);
 
-					SNNumberRecognizer::ANNClassItem item;
-					item.Image = non_symbol.clone();
+					cv::Mat non_symbol = cv::Mat(plate, random_rect);
+					bool is_not_symbol = true;
 
-					symbols[NON_SYMBOL_CLASS].push_back(item);
+					for (auto sym : num.Symbols)
+					{
+						if (sym.SymbolRect.width())
+						{
+							if (sym.SymbolRect.left() > 0 && sym.SymbolRect.top() > 0 && sym.SymbolRect.right() < image.cols && sym.SymbolRect.bottom() < image.rows)
+							{
+									cv::Rect symbol_rect = cv::Rect(
+									sym.SymbolRect.left() / 268.0 * num.ExactRect.width(),
+									sym.SymbolRect.top() / 60.0 * num.ExactRect.height(),
+									sym.SymbolRect.width() / 268.0 * num.ExactRect.width(),
+									sym.SymbolRect.height() / 60.0 * num.ExactRect.height());
+
+									cv::Rect intersect = random_rect & symbol_rect;
+									if (intersect.area() * 2 > symbol_rect.area())
+									{
+										is_not_symbol = false;
+										break;
+									}
+							}
+						}
+					}
+
+					if (is_not_symbol)
+					{
+						SNNumberRecognizer::ANNClassItem item;
+						item.Image = non_symbol.clone();
+
+						symbols[NON_SYMBOL_CLASS].push_back(item);
+					}
 				}
 			}
 
@@ -122,7 +148,7 @@ void SNSymbolExtractor::Extract(const SNTestNumbers& numbers, QString in_files_p
 }
 //------------------------------------------------------------
 
-void SNSymbolExtractor::SaveExtracted(const QString& out_path, const SNNumberRecognizer::ANNSymbolClassesMap& symbols, const SNNumberRecognizer::SNPlateList& plates)
+void SNSymbolExtractor::SaveExtracted(const QString& out_path, SNNumberRecognizer::ANNSymbolClassesMap& symbols, const SNNumberRecognizer::SNPlateList& plates)
 {
 	qDebug() << "Saving";
 
@@ -170,6 +196,7 @@ void SNSymbolExtractor::SaveExtracted(const QString& out_path, const SNNumberRec
 		{
 			int curr_count = count++;
 			QString filename = QString("%1/%2.bmp").arg(dir_name).arg(curr_count);
+			sym.Count = curr_count;
 
 			cv::imwrite(filename.toLocal8Bit().data(), sym.Image);
 
@@ -178,6 +205,31 @@ void SNSymbolExtractor::SaveExtracted(const QString& out_path, const SNNumberRec
 		}
 
 		dat_file.close();
+	}
+
+	for (auto& neg_sym_class : symbols)
+	{
+		QFile neg_dat_file(QString("%1/neg_%2.dat").arg(out_path).arg(neg_sym_class.first));
+		neg_dat_file.open(QIODevice::WriteOnly);
+
+		QTextStream neg_dat_ts(&neg_dat_file);
+
+		for (auto& sym_class : symbols)
+		{
+			if (neg_sym_class.first != sym_class.first)
+			{
+				for (auto& sym : sym_class.second)
+				{
+					//if (qrand() < RAND_MAX / 20)
+					{
+						QString neg_dat_file_line = QString("%1/%2.bmp\n").arg(sym_class.first).arg(sym.Count);
+						neg_dat_ts << neg_dat_file_line;
+					}
+				}
+			}
+		}
+
+		neg_dat_file.close();
 	}
 
 	qDebug() << QString("Min count = %1 MaxCount = %2").arg(min_count).arg(max_count);

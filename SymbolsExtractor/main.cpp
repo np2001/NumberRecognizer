@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 	QCoreApplication a(argc, argv);
 
 	QString base_path = "e:/test_images_10_12_2014";
-	QString out_path = "e:/symbols5";
+	QString out_path = "e:/symbols6";
 
 	SNSymbolExtractor SE;
 	SNTestNumbersLoader TNL;
@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 
 	//TNL.WarpSymbols(tn, 0.9, 0.9);
 
-	SE.Extract(tn, base_path, out_path);
+	SE.Extract(tn, base_path, out_path, 0.999);
 
 	return a.exec();
 }

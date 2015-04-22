@@ -88,6 +88,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SNANNTrainer.cpp" />
     <ClCompile Include="SNHeatMapEvaluator.cpp" />
+    <ClCompile Include="SNLBPTrainer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Common\SNANNConfigLoader.h" />
@@ -97,6 +98,7 @@
     <ClInclude Include="..\Common\tinyxml.h" />
     <ClInclude Include="SNANNTrainer.h" />
     <ClInclude Include="SNHeatMapEvaluator.h" />
+    <ClInclude Include="SNLBPTrainer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

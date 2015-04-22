@@ -51,6 +51,9 @@
     <ClCompile Include="..\Common\tinyxmlparser.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="SNLBPTrainer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Common\SNTestNumbersLoader.h">
@@ -72,6 +75,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Common\tinyxml.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SNLBPTrainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

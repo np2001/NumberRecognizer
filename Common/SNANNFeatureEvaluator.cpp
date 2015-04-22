@@ -46,10 +46,10 @@ cv::Mat SNANNFeatureEvaluator::Features(const cv::Mat& gray_image)
 
 	cv::resize(gray_image, low_data, cv::Size(8, 16));
 
-	//cv::threshold(low_data, low_data, 128, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
+	cv::threshold(low_data, low_data, 128, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
 	//cv::equalizeHist(low_data, low_data);
 
-	cv::Mat out = cv::Mat::zeros(1, 256, CV_32F);
+	cv::Mat out = cv::Mat::zeros(1, low_data.cols * low_data.rows, CV_32F);
 
 	for (int x = 0; x < low_data.cols; x++)
 	{
@@ -59,16 +59,21 @@ cv::Mat SNANNFeatureEvaluator::Features(const cv::Mat& gray_image)
 
 			uint8_t value = 0;
 
-			LBPBit(low_data, x - 1, y - 1, center_value, 1, value);
+			/*LBPBit(low_data, x - 1, y - 1, center_value, 1, value);
 			LBPBit(low_data, x, y - 1, center_value, 2, value);
 			LBPBit(low_data, x + 1, y - 1, center_value, 4, value);
 			LBPBit(low_data, x - 1, y, center_value, 8, value);
 			LBPBit(low_data, x + 1, y, center_value, 16, value);
 			LBPBit(low_data, x - 1, y + 1, center_value, 32, value);
 			LBPBit(low_data, x, y + 1, center_value, 64, value);
-			LBPBit(low_data, x + 1, y + 1, center_value, 128, value);
+			LBPBit(low_data, x + 1, y + 1, center_value, 128, value);*/
 
-			out.at<float>(value)++;
+			LBPBit(low_data, x, y - 1, center_value, 1, value);
+			LBPBit(low_data, x + 1, y, center_value, 2, value);
+			LBPBit(low_data, x, y + 1, center_value, 4, value);
+			LBPBit(low_data, x + 1, y + 1, center_value, 8, value);
+
+			out.at<float>(y * low_data.cols + x) = value + 0.5;
 
 		}
 	}

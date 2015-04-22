@@ -20,12 +20,12 @@ namespace SNNumberRecognizer
 	{
 		cv::Mat Features;
 		cv::Mat Image;
+		int32_t Count;
 	};
 	//------------------------------------------------------------------------------
 	struct ANNSymbolClassItems : public std::list<ANNClassItem>
 	{
 		char DisplaySymbol;
-		//int32_t SymbolCode;
 	};
 	//------------------------------------------------------------------------------
 	typedef int32_t ANNClassID;
