@@ -14,6 +14,12 @@
 #include "../Common/SNANNPredictor.h"
 #include "../Common/SNNumberRecognizerDefines.h"
 #include <QDebug>
+#include "SNMasterRecognizer.h"
+#include "SNMasterSegmentor.h"
+
+SNMasterRecognizer mr;
+SNMasterSegmentor ms;
+
 void LoadCascade(SNPlateDetector& pd, QString cascade_filename)
 {
 	QFile f(cascade_filename);
@@ -31,6 +37,21 @@ int main(int argc, char *argv[])
 	QCoreApplication a(argc, argv);
 
 	SNPlateDetector pd;
+
+	cv::Mat image = cv::imread("e:/symbols6/plates/888.bmp", cv::IMREAD_GRAYSCALE);
+	cv::resize(image, image, image.size() * 1);
+
+	SNFigureGroups fg;
+
+	QTime time;
+	time.start();
+	ms.Segment(image, fg, 0, 255, 1);
+
+	int t = time.elapsed();
+
+	qDebug() << t;
+
+	getch();
 
 	LoadCascade(pd, "cascade_2.xml");
 
@@ -93,6 +114,14 @@ int main(int argc, char *argv[])
 					cv::cvtColor(i, gray_image, CV_RGB2GRAY);
 					cv::resize(i, test_image, cv::Size(i.cols * 10, i.rows * 10));
 
+					int dilation_size = 1;
+					cv::Mat element = getStructuringElement(cv::MORPH_ERODE,
+						cv::Size(2 * dilation_size + 1, 2 * dilation_size + 1),
+						cv::Point(dilation_size, dilation_size));
+					/// Apply the dilation operation
+					//cv::Canny(gray_image, gray_image, 128, 255);
+					//erode(gray_image, gray_image, element);
+
 					for (int i = 0; i < gray_image.rows - window_size.height; ++i)
 					{
 						for (int j = 0; j < gray_image.cols - window_size.width; ++j)
@@ -102,7 +131,7 @@ int main(int argc, char *argv[])
 
 							float weight;
 							int class_id = pred.Predict(SNNumberRecognizer::DigitsAlphabet, symbol_image, eval, weight);
-							if (class_id != -1 && /*class_id == 4 &&*/ weight > 0.9)
+							if (class_id != -1/* && class_id == 4*/ && weight > 0.5)
 							{
 								char text[20];
 								sprintf_s(text, "%i", class_id);

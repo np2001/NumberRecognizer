@@ -3,6 +3,7 @@
 #include <opencv2\highgui\highgui.hpp>
 #include "opencv2\imgproc\imgproc.hpp"
 #include <QDebug>
+#include "..\Common\SNLocalContraster.h"
 //#include "SNExactRectDetector.h"
 //------------------------------------------------------------
 SNSymbolExtractor::SNSymbolExtractor()
@@ -20,7 +21,7 @@ void SNSymbolExtractor::Extract(const SNTestNumbers& numbers, QString in_files_p
 	SNNumberRecognizer::ANNSymbolClassesMap symbols;
 
 	SNNumberRecognizer::SNPlateList plates;
-	
+	SNLocalContraster lc;
 
 	int count = 0;
 	for (auto num_file : numbers)
@@ -86,6 +87,7 @@ void SNSymbolExtractor::Extract(const SNTestNumbers& numbers, QString in_files_p
 								{
 									SNNumberRecognizer::ANNClassItem item;
 									item.Image = symbol.clone();
+									//item.Image = lc.ProcessRGB24(symbol);
 									symbols[sym.SymbolCode].push_back(item);
 								}
 							}
@@ -131,6 +133,7 @@ void SNSymbolExtractor::Extract(const SNTestNumbers& numbers, QString in_files_p
 					{
 						SNNumberRecognizer::ANNClassItem item;
 						item.Image = non_symbol.clone();
+						//item.Image = lc.ProcessRGB24(non_symbol);
 
 						symbols[NON_SYMBOL_CLASS].push_back(item);
 					}

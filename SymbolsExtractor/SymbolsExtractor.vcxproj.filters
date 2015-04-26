@@ -33,7 +33,7 @@
     <ClCompile Include="SNSymbolExtractor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SNLocalContraster.cpp">
+    <ClCompile Include="..\Common\SNLocalContraster.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,7 +47,7 @@
     <ClInclude Include="SNSymbolExtractor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SNLocalContraster.h">
+    <ClInclude Include="..\Common\SNLocalContraster.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

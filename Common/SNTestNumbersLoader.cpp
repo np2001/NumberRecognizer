@@ -4,6 +4,7 @@
 #include <QtXML/QDomDocument>
 #include "opencv2\highgui\highgui.hpp"
 #include "QDebug"
+#include "SNLocalContraster.h"
 //-----------------------------------------------------------------------------
 SNTestNumbersLoader::SNTestNumbersLoader()
 {
@@ -193,6 +194,7 @@ void SNTestNumbersLoader::Parse(const QStringList& files, SNTestNumbers& test_nu
 
 void SNTestNumbersLoader::LoadSymbols(SNNumberRecognizer::ANNAlphabets& alphabets, const QString& alph_config_filename)
 {
+	SNLocalContraster lc;
 	QDomDocument alphabets_data;
 
 	qDebug() << "Loading symbols";
@@ -234,7 +236,7 @@ void SNTestNumbersLoader::LoadSymbols(SNNumberRecognizer::ANNAlphabets& alphabet
 
 					SNNumberRecognizer::ANNClassItem item;
 					std::string s = std::string(image_filename.toLocal8Bit().data());
-					item.Image = cv::imread(s, 0);
+					item.Image = cv::imread(s, cv::IMREAD_GRAYSCALE);
 					alphabets[alphabet_id].SymbolClasses[symbol_class_id].push_back(item);
 				}
 

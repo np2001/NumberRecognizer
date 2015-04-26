@@ -10,7 +10,9 @@ class SNLocalContraster
 public:
 	SNLocalContraster();
 	~SNLocalContraster();
-	cv::Mat Process(const cv::Mat& gray_image);
+	cv::Mat ProcessGray(const cv::Mat& gray_image);
+	cv::Mat ProcessRGB24(const cv::Mat& rgb24_image);
+
 private:
 	bool IsPointDarker(const cv::Mat& image, int32_t x, int32_t y, uint8_t central_value);
 };

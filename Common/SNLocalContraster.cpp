@@ -1,4 +1,5 @@
 #include "SNLocalContraster.h"
+#include <opencv2\imgproc\imgproc.hpp>
 //-----------------------------------------------------------------
 SNLocalContraster::SNLocalContraster()
 {
@@ -12,7 +13,7 @@ SNLocalContraster::~SNLocalContraster()
 }
 //-----------------------------------------------------------------
 
-cv::Mat SNLocalContraster::Process(const cv::Mat& gray_image)
+cv::Mat SNLocalContraster::ProcessGray(const cv::Mat& gray_image)
 {
 	cv::Mat res = gray_image.clone();
 
@@ -50,5 +51,13 @@ bool SNLocalContraster::IsPointDarker(const cv::Mat& image, int32_t x, int32_t y
 	{
 		return false;
 	}
+}
+//-----------------------------------------------------------------
+
+cv::Mat SNLocalContraster::ProcessRGB24(const cv::Mat& rgb24_image)
+{
+	cv::Mat gray_image;
+	cv::cvtColor(rgb24_image, gray_image, CV_RGB2GRAY);
+	return ProcessGray(gray_image);
 }
 //-----------------------------------------------------------------

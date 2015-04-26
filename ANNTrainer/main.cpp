@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
 
 	
 	qDebug() << "Training begins";
-	trainer.Train(train_alphabets, 20, config);
+	trainer.Train(train_alphabets, 100, config);
 	qDebug() << "Training finished";
 
 	SNNumberRecognizer::SNANNConfigLoader config_loader;
@@ -176,7 +176,7 @@ int main(int argc, char *argv[])
 
 	SNNumberRecognizer::ANNAlphabets eval_alphabets;
 
-	QString eval_alph_config_file = "e:\\symbols\\alphabets_config.xml";
+	QString eval_alph_config_file = "e:\\symbols6\\alphabets_config.xml";
 	TNL.LoadSymbols(eval_alphabets, eval_alph_config_file);
 	TNL.EvaluateFeatures(eval_alphabets, eval);
 
