@@ -96,7 +96,7 @@ void SNSymbolExtractor::Extract(const SNTestNumbers& numbers, QString in_files_p
 				}
 
 				
-				for (int i = 0; i < 10; ++i)
+				for (int i = 0; i < 1; ++i)
 				if (plate.cols > NON_SYMBOL_WIDTH && plate.rows > NON_SYMBOL_HEIGHT)
 				{
 					cv::Rect random_rect = cv::Rect(

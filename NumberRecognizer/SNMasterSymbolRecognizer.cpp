@@ -130,6 +130,24 @@ std::pair<char, double> SNMasterSymbolRecognizer::Process(const cv::Mat& input, 
 }
 //----------------------------------------------------------------
 
+void SNMasterSymbolRecognizer::Process(const cv::Mat& input, const SNFigureGroups& groups, SNNumberStats& stats)
+{
+	for (auto& fg : groups)
+	{
+		stats.push_back(SNSymbolStats());
+
+		for (auto& f : fg)
+		{
+			cv::Mat symbol = cv::Mat(input, cv::Rect(f.left(), f.top(), f.Width(), f.Height())).clone();
+			std::pair<char, double> res = ProcessChar(symbol);
+			std::pair<char, double> res2 = ProcessNum(symbol);
+			stats.back()[res.first] += res.second;
+			stats.back()[res2.first] += res2.second;
+		}
+	}
+}
+//----------------------------------------------------------------
+
 double SNMasterSymbolRecognizer::PredictMinDiff(const cv::Mat& pred_out, int max_val)
 {
 	float ret = 100.; // the current version of the OpenCV Neural Network, the value will not exceed 1.76

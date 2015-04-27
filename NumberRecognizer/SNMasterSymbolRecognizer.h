@@ -4,6 +4,10 @@
 #include <utility>
 #include <opencv2\core\core.hpp>
 #include <opencv2\ml\ml.hpp>
+#include "SNMasterRecognizerStructs.h"
+//----------------------------------------------------------------
+typedef std::map<char, double> SNSymbolStats;
+typedef std::vector<SNSymbolStats> SNNumberStats;
 //----------------------------------------------------------------
 
 class SNMasterSymbolRecognizer
@@ -13,6 +17,7 @@ public:
 	~SNMasterSymbolRecognizer();
 	std::pair<char, double> ProcessChar(const cv::Mat& input);
 	std::pair<char, double> ProcessNum(const cv::Mat& input);
+	void Process(const cv::Mat& input, const SNFigureGroups& groups, SNNumberStats& stats);
 private:
 	std::pair<char, double> Process(const cv::Mat& input, cv::NeuralNet_MLP* mlp, bool is_num);
 	cv::Mat ConvertToRow(const cv::Mat& input);

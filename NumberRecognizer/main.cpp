@@ -40,39 +40,7 @@ int main(int argc, char *argv[])
 
 	SNPlateDetector pd;
 
-	cv::Mat image = cv::imread("f:/symbols5/plates/222.bmp", cv::IMREAD_GRAYSCALE);
-	cv::resize(image, image, image.size() * 1);
-
-	SNFigureGroups fgs;
-
-	QTime time;
-	time.start();
-	ms.Segment(image, fgs, 0, 255, 1);
-
-	for (auto fg : fgs)
-	{
-		for (auto f : fg)
-		{
-			if (f.left() >= 12)
-			{
-				int r = 0;
-			}
-
-			cv::Mat symbol = cv::Mat(image, cv::Rect(f.left(), f.top(), f.Width(), f.Height())).clone();
-			std::pair<char, double> res = msr.ProcessChar(symbol);
-			std::pair<char, double> res2 = msr.ProcessNum(symbol);
-			int r = 0;
-		}
-		
-	}
-
-	int t = time.elapsed();
-
-	qDebug() << t;
-
-	getch();
-
-	LoadCascade(pd, "cascade_2.xml");
+	SNANNFeatureEvaluator eval;
 
 	SNNumberRecognizer::SNANNConfigLoader config_loader;
 
@@ -85,20 +53,107 @@ int main(int argc, char *argv[])
 	f.close();
 
 	SNNumberRecognizer::SNANNPredictor pred;
+	pred.Load(test_config);
+
+	cv::Mat image = cv::imread("e:/symbols6/plates/117.bmp", cv::IMREAD_GRAYSCALE);
+	cv::resize(image, image, image.size() * 1);
+
+	SNFigureGroups fgs;
+
+	QTime time;
+	time.start();
+	ms.Segment(image, fgs, 0, 255, 5);
+	
+	cv::Mat debug_image;
+	ms.DebugFigureGroups(image, fgs, debug_image, 2);
+
+	SNNumberStats stats;
+	//msr.Process(image, fgs, stats);
+
+	for (auto& fg : fgs)
+	{
+		stats.push_back(SNSymbolStats());
+
+		for (auto& f : fg)
+		{
+			cv::Mat symbol = cv::Mat(image, cv::Rect(f.left(), f.top(), f.Width(), f.Height())).clone();
+
+			float digit_weight;
+			int digit_class_id = pred.Predict(SNNumberRecognizer::DigitsAlphabet, symbol, eval, digit_weight);
+
+			char digit_char;
+			switch (digit_class_id)
+			{
+			case 0: digit_char = '0'; break;
+			case 1: digit_char = '1'; break;
+			case 2: digit_char = '2'; break;
+			case 3: digit_char = '3'; break;
+			case 4: digit_char = '4'; break;
+			case 5: digit_char = '5'; break;
+			case 6: digit_char = '6'; break;
+			case 7: digit_char = '7'; break;
+			case 8: digit_char = '8'; break;
+			case 9: digit_char = '9'; break;
+
+			default:
+				digit_char = '?';
+				break;
+			}
+			
+			stats.back()[digit_char] += digit_weight;
+
+			float char_weight;
+			int char_class_id = pred.Predict(SNNumberRecognizer::LettersAlphabet, symbol, eval, char_weight);
+
+			char letter_char;
+			switch (char_class_id)
+			{
+			case 0: letter_char = 'A'; break;
+			case 1: letter_char = 'B'; break;
+			case 2: letter_char = 'E'; break;
+			case 3: letter_char = 'K'; break;
+			case 4: letter_char = 'M'; break;
+			case 5: letter_char = 'H'; break;
+			case 6: letter_char = 'O'; break;
+			case 7: letter_char = 'P'; break;
+			case 8: letter_char = 'C'; break;
+			case 9: letter_char = 'T'; break;
+			case 10: letter_char = 'Y'; break;
+			case 11: letter_char = 'X'; break;
+			default:
+				letter_char = '?';
+				break;
+			}
+
+			stats.back()[letter_char] += char_weight;
+
+			//std::pair<char, double> res = ProcessChar(symbol);
+			//std::pair<char, double> res2 = ProcessNum(symbol);
+			//stats.back()[res.first] += res.second;
+			//stats.back()[res2.first] += res2.second;
+		}
+	}
+
+	int t = time.elapsed();
+
+	qDebug() << t;
+
+	getch();
+
+	LoadCascade(pd, "cascade_2.xml");
+
 	int32_t total_count = 0;
 	int32_t total_correct_count = 0;
 	int32_t total_incorrect_count = 0;
 	int32_t total_unrecognized_count = 0;
 
-	pred.Load(test_config);
-	
+
 	cv::VideoCapture capture("e:/MailCloud/video_data_base/autonumbers/russia/num.avi");
 
 	// current video frame
 	cv::Mat frame;
 	SNNumberRecognizer::SNHistogramSegmentor hs;
-	SNANNFeatureEvaluator eval;
-
+	
 	cv::Size window_size = cv::Size(8, 14);
 
 	if (capture.isOpened())

@@ -38,6 +38,8 @@ void SNMasterSegmentor::Segment(const cv::Mat& gray_image, SNFigureGroups& group
 
 	RemoveEqualRects(group);
 
+	GroupByX(group, groups, gray_image.cols / 20);
+
 	//MakeGroups(group, groups);
 	//// выкидываем элементы, что выходят за размеры номера, предпологаем что номер не шире 7 * ширина первого элемента
 	//FigsRemoveTooLongByXFromFirst(groups);
@@ -54,9 +56,8 @@ void SNMasterSegmentor::Segment(const cv::Mat& gray_image, SNFigureGroups& group
 	////// сливаем пересекающиеся группы
 	//GroupsMergeIntersects(groups);
 
-	DebugFigureGroups(gray_image, group, 2);
 
-	groups.push_back(group);
+	//groups.push_back(group);
 }
 //---------------------------------------------------
 
@@ -278,29 +279,22 @@ void SNMasterSegmentor::ParseToFigures(cv::Mat& mat, SNFigureGroup& group)
 }
 //---------------------------------------------------
 
-void SNMasterSegmentor::DebugFigureGroups(const cv::Mat& gray_image, const SNFigureGroup& group, int scale /*= 1*/)
+void SNMasterSegmentor::DebugFigureGroups(const cv::Mat& gray_image, const SNFigureGroups& groups, cv::Mat& out_image, int scale /*= 1*/)
 {
-	//// отрисовываем найденные фигуры
-	if (!group.empty())
-	{
-		cv::Mat colored_mat(gray_image.size(), CV_8UC3);
-		cvtColor(gray_image, colored_mat, CV_GRAY2RGB);
-		cv:resize(colored_mat, colored_mat, colored_mat.size() * 2);
-		for (size_t nn = 0; nn < group.size(); ++nn)
-		{
-			cv::rectangle(colored_mat, cv::Point(group[nn].left() * scale, group[nn].top() * scale), cv::Point(group[nn].right() * scale, group[nn].bottom() * scale), CV_RGB(255, 0, 0), 1);
-		}
+	cvtColor(gray_image, out_image, CV_GRAY2RGB);
+	cv:resize(out_image, out_image, out_image.size() * scale);
 
-		int r = 0;
-	}
-}
-//---------------------------------------------------
-
-void SNMasterSegmentor::DebugFigureGroups(const cv::Mat& gray_image, const SNFigureGroups& groups, int scale /*= 1*/)
-{
 	for (auto group : groups)
 	{
-		DebugFigureGroups(gray_image, group, scale);
+		cv::Scalar color = CV_RGB(rand() % 255, rand() % 255, rand() % 255);
+		//// отрисовываем найденные фигуры
+		if (!group.empty())
+		{
+			for (size_t nn = 0; nn < group.size(); ++nn)
+			{
+				cv::rectangle(out_image, cv::Point(group[nn].left() * scale, group[nn].top() * scale), cv::Point(group[nn].right() * scale, group[nn].bottom() * scale), color, 1);
+			}
+		}
 	}
 }
 //---------------------------------------------------
@@ -463,6 +457,23 @@ bool SNMasterSegmentor::AngleIsEqual(int an1, int an2)
 	}
 	assert(false);
 	return false;
+}
+//------------------------------------------------------
+
+void SNMasterSegmentor::GroupByX(const SNFigureGroup& figs, SNFigureGroups& groups, int32_t group_step)
+{
+	int32_t first_x = -1;
+	for (auto f : figs)
+	{
+		if (groups.empty() || f.left() > first_x + group_step)
+		{
+			SNFigureGroup new_group;
+			groups.push_back(new_group);
+			first_x = f.left();
+		}
+
+		groups.back().push_back(f);
+	}
 }
 //------------------------------------------------------
 

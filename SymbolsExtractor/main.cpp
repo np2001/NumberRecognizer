@@ -10,8 +10,8 @@ int main(int argc, char *argv[])
 {
 	QCoreApplication a(argc, argv);
 
-	QString base_path = "e:/test_images_10_12_2014";
-	QString out_path = "e:/symbols7";
+	QString base_path = "e:/test_images";
+	QString out_path = "e:/symbols6";
 
 	//while (true)
 	//{

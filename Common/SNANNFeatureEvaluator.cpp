@@ -44,10 +44,10 @@ cv::Mat SNANNFeatureEvaluator::Features(const cv::Mat& gray_image)
 {
 	cv::Mat low_data;
 
-	cv::resize(gray_image, low_data, cv::Size(8, 8));
+	cv::resize(gray_image, low_data, cv::Size(8, 16));
 
-	cv::threshold(low_data, low_data, 128, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
-	//cv::equalizeHist(low_data, low_data);
+	//cv::threshold(low_data, low_data, 128, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
+	cv::equalizeHist(low_data, low_data);
 
 	cv::Mat out = cv::Mat::zeros(1, low_data.cols * low_data.rows, CV_32F);
 
