@@ -16,9 +16,11 @@
 #include <QDebug>
 #include "SNMasterRecognizer.h"
 #include "SNMasterSegmentor.h"
+#include "SNMasterSymbolRecognizer.h"
 
 SNMasterRecognizer mr;
 SNMasterSegmentor ms;
+SNMasterSymbolRecognizer msr;
 
 void LoadCascade(SNPlateDetector& pd, QString cascade_filename)
 {
@@ -38,14 +40,31 @@ int main(int argc, char *argv[])
 
 	SNPlateDetector pd;
 
-	cv::Mat image = cv::imread("e:/symbols6/plates/888.bmp", cv::IMREAD_GRAYSCALE);
+	cv::Mat image = cv::imread("f:/symbols5/plates/222.bmp", cv::IMREAD_GRAYSCALE);
 	cv::resize(image, image, image.size() * 1);
 
-	SNFigureGroups fg;
+	SNFigureGroups fgs;
 
 	QTime time;
 	time.start();
-	ms.Segment(image, fg, 0, 255, 1);
+	ms.Segment(image, fgs, 0, 255, 1);
+
+	for (auto fg : fgs)
+	{
+		for (auto f : fg)
+		{
+			if (f.left() >= 12)
+			{
+				int r = 0;
+			}
+
+			cv::Mat symbol = cv::Mat(image, cv::Rect(f.left(), f.top(), f.Width(), f.Height())).clone();
+			std::pair<char, double> res = msr.ProcessChar(symbol);
+			std::pair<char, double> res2 = msr.ProcessNum(symbol);
+			int r = 0;
+		}
+		
+	}
 
 	int t = time.elapsed();
 

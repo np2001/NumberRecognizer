@@ -55,6 +55,8 @@ void SNMasterSegmentor::Segment(const cv::Mat& gray_image, SNFigureGroups& group
 	//GroupsMergeIntersects(groups);
 
 	DebugFigureGroups(gray_image, group, 2);
+
+	groups.push_back(group);
 }
 //---------------------------------------------------
 
