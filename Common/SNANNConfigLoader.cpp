@@ -65,7 +65,10 @@ namespace SNNumberRecognizer
 
 			for (auto cc : c.second.CharClassIDs)
 			{
-				sprintf_s(str, sizeof(str), "<symclass id=\"%i\" displaysymbol=\"%c\"/>\r\n", (int32_t)cc.first, cc.second);
+				if (cc.second.DisplaySymbol == 0)
+					cc.second.DisplaySymbol = '*';
+
+				sprintf_s(str, sizeof(str), "<symclass id=\"%i\" displaysymbol=\"%c\"/>\r\n", (int32_t)cc.first, cc.second.DisplaySymbol);
 				res += str;
 			}
 

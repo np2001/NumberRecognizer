@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
 
 	SNANNFeatureEvaluator eval;
 
-	QString train_alph_config_file = "f:\\symbols5\\alphabets_config.xml";
+	QString train_alph_config_file = "e:\\symbols6\\alphabets_config.xml";
 	TNL.LoadSymbols(train_alphabets, train_alph_config_file);
 	TNL.EvaluateFeatures(train_alphabets, eval);
 
@@ -173,13 +173,13 @@ int main(int argc, char *argv[])
 
 	f1.close();
 
-	//SNNumberRecognizer::ANNAlphabets eval_alphabets;
+	SNNumberRecognizer::ANNAlphabets eval_alphabets;
 
-	//QString eval_alph_config_file = "e:\\symbols4\\alphabets_config.xml";
-	//TNL.LoadSymbols(eval_alphabets, eval_alph_config_file);
-	//TNL.EvaluateFeatures(eval_alphabets, eval);
+	QString eval_alph_config_file = "e:\\symbols4\\alphabets_config.xml";
+	TNL.LoadSymbols(eval_alphabets, eval_alph_config_file);
+	TNL.EvaluateFeatures(eval_alphabets, eval);
 
-	//Evaluate(eval_alphabets, config);
+	Evaluate(eval_alphabets, config);
 
 	return a.exec();
 }

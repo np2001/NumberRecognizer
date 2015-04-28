@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 	SNNumberRecognizer::SNANNConfigLoader config_loader;
 
 	SNNumberRecognizer::SNANNConfigMap test_config;
-	QFile f("../ANNTrainer/test.ann");
+	QFile f("../ANNTrainer/best.ann");
 	f.open(QIODevice::ReadOnly);
 
 	QByteArray cfg = f.readAll();
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 	SNNumberRecognizer::SNANNPredictor pred;
 	pred.Load(test_config);
 
-	cv::Mat image = cv::imread("f:/symbols6/plates/43.bmp", cv::IMREAD_GRAYSCALE);
+	cv::Mat image = cv::imread("e:/symbols6/plates/43.bmp", cv::IMREAD_GRAYSCALE);
 	cv::resize(image, image, image.size() * 1);
 
 	SNFigureGroups fgs;

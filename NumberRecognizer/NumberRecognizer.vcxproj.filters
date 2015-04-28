@@ -51,6 +51,9 @@
     <ClCompile Include="SNMasterSegmentor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SNModelMatcher.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SNPlateDetector.h">
@@ -76,6 +79,9 @@
     </ClInclude>
     <ClInclude Include="SNMasterRecognizerStructs.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SNModelMatcher.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
