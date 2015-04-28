@@ -83,11 +83,8 @@
     <ClCompile Include="..\Common\tinyxmlerror.cpp" />
     <ClCompile Include="..\Common\tinyxmlparser.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="SNDigitsComparator.cpp" />
-    <ClCompile Include="SNHistogramSegmentor.cpp" />
     <ClCompile Include="SNMasterRecognizer.cpp" />
     <ClCompile Include="SNMasterSegmentor.cpp" />
-    <ClCompile Include="SNMasterSymbolRecognizer.cpp" />
     <ClCompile Include="SNPlateDetector.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -95,12 +92,9 @@
     <ClInclude Include="..\Common\SNANNFeatureEvaluator.h" />
     <ClInclude Include="..\Common\SNANNPredictor.h" />
     <ClInclude Include="..\Common\tinyxml.h" />
-    <ClInclude Include="SNDigitsComparator.h" />
-    <ClInclude Include="SNHistogramSegmentor.h" />
     <ClInclude Include="SNMasterRecognizer.h" />
     <ClInclude Include="SNMasterRecognizerStructs.h" />
     <ClInclude Include="SNMasterSegmentor.h" />
-    <ClInclude Include="SNMasterSymbolRecognizer.h" />
     <ClInclude Include="SNPlateDetector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
@@ -108,7 +102,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties MocDir=".\GeneratedFiles\$(ConfigurationName)" UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" lupdateOptions="" lupdateOnBuild="0" lreleaseOptions="" Qt5Version_x0020_Win32="4.8.5" MocOptions="" />
+      <UserProperties MocDir=".\GeneratedFiles\$(ConfigurationName)" UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" lupdateOptions="" lupdateOnBuild="0" lreleaseOptions="" Qt5Version_x0020_Win32="4.8.5_x86" MocOptions="" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

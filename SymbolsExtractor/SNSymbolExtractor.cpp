@@ -21,8 +21,7 @@ void SNSymbolExtractor::Extract(const SNTestNumbers& numbers, QString in_files_p
 	SNNumberRecognizer::ANNSymbolClassesMap symbols;
 
 	SNNumberRecognizer::SNPlateList plates;
-	SNLocalContraster lc;
-
+	
 	int count = 0;
 	for (auto num_file : numbers)
 	{
@@ -36,6 +35,19 @@ void SNSymbolExtractor::Extract(const SNTestNumbers& numbers, QString in_files_p
 
 			if (image.cols && image.rows)
 			{
+				cv::Rect non_corrected_plate_rect = cv::Rect(
+					num.OuterRect.x(),
+					num.OuterRect.y(),
+					num.OuterRect.width(),
+					num.OuterRect.height());
+
+				non_corrected_plate_rect = cv::Rect(non_corrected_plate_rect.x - non_corrected_plate_rect.width * 0.2, non_corrected_plate_rect.y - non_corrected_plate_rect.height * 0.25, non_corrected_plate_rect.width * 1.5, non_corrected_plate_rect.height * 1.5);
+				non_corrected_plate_rect &= cv::Rect(0, 0, image.cols - 1, image.rows - 1);
+
+				cv::Mat non_corrected_plate = cv::Mat(image, non_corrected_plate_rect);
+
+				plates.push_back(non_corrected_plate.clone());
+
 				cv::Mat plate = cv::Mat(
 					image,
 					cv::Rect(
@@ -55,8 +67,7 @@ void SNSymbolExtractor::Extract(const SNTestNumbers& numbers, QString in_files_p
 				/// Rotate the warped image
 				warpAffine(plate, plate, rot_mat, plate.size());
 
-				plates.push_back(plate.clone());
-
+				
 				for (auto sym : num.Symbols)
 				{
 					if (sym.SymbolValidity >= min_symbol_probability)

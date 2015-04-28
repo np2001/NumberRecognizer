@@ -12,7 +12,7 @@ class SNMasterSegmentor
 public:
 	SNMasterSegmentor();
 	~SNMasterSegmentor();
-	void Segment(const cv::Mat& gray_image, SNFigureGroups& groups, int32_t min_gray_level = 0, int32_t max_gray_level = 255, int32_t gray_step = 10);
+	void Segment(const cv::Mat& gray_image, SNFigureGroups& groups, int32_t min_gray_level = 0, int32_t max_gray_level = 255, int32_t gray_step = -1);
 	void DebugFigureGroups(const cv::Mat& gray_image, const SNFigureGroups& groups, cv::Mat& out_image, int scale = 1);
 
 private:

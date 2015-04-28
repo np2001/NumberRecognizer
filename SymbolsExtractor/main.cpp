@@ -3,29 +3,16 @@
 #include "SNSymbolExtractor.h"
 #include "../Common/SNTestNumbersLoader.h"
 #include "opencv2/highgui/highgui.hpp"
-#include "../Common/SNLocalContraster.h"
 #include <windows.h>
 
 int main(int argc, char *argv[])
 {
 	QCoreApplication a(argc, argv);
 
-	QString base_path = "e:/test_images";
-	QString out_path = "e:/symbols6";
+	QString base_path = "f:/test_images";
+	QString out_path = "f:/symbols6";
 
-	//while (true)
-	//{
-	//	QString plate_fn;
-	//	plate_fn = QString("f:\\symbols5\\plates\\%1.bmp").arg(GetTickCount() % 1600);
-
-	//	//std::string s = plate_fn.toStdString();
-	//	cv::Mat plate = cv::imread(plate_fn.toLocal8Bit().data(), cv::IMREAD_GRAYSCALE);
-
-	//	SNLocalContraster lc;
-	//	cv::Mat res = lc.Process(plate);
-	//	int r = 0;
-	//}
-
+	
 	SNSymbolExtractor SE;
 	SNTestNumbersLoader TNL;
 

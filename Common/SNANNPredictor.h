@@ -5,8 +5,26 @@
 #include "SNANNFeatureEvaluator.h"
 #include "SNNumberRecognizerDefines.h"
 //-------------------------------------------------------------------------------
+
 namespace SNNumberRecognizer
 {
+	struct ANNPredictionResult
+	{
+		char Symbol;
+		float Weight;
+	};
+
+	struct ANNPredictionResults : public std::list<ANNPredictionResult>
+	{
+		void Sort()
+		{
+			sort([](const ANNPredictionResult & a, const ANNPredictionResult & b) -> bool
+			{
+				return a.Weight > b.Weight;
+			});
+		}
+	};
+
 	class SNANNPredictor
 	{
 	public:
@@ -14,10 +32,7 @@ namespace SNNumberRecognizer
 		~SNANNPredictor();
 		void Load(SNANNConfigMap& ann_config);
 		int32_t Predict(AlphabetTypes type, const ANNClassItem& features, float& weight);
-		int32_t Predict(AlphabetTypes type, const cv::Mat& image, SNANNFeatureEvaluator& eval, float& weight);
-		//void Predict(const cv::Mat& image, SNANNFeatureEvaluator& eval, cv::Size win_size, SNANNPredictionResults& results);
-		//void Predict(const cv::Mat& image, SNANNFeatureEvaluator& eval, SNPlateTemplate& templ, SNANNPredictionResults& results);
-		void CalcDetectionVariants(SNANNPredictionResults& results);
+		void Predict(AlphabetTypes type, const cv::Mat& image, SNANNFeatureEvaluator& eval, ANNPredictionResults& results);
 	private:
 		ANNAlphabets Alphabets;
 	};

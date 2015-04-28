@@ -81,7 +81,6 @@
     <ClCompile Include="..\Common\SNANNConfigLoader.cpp" />
     <ClCompile Include="..\Common\SNANNFeatureEvaluator.cpp" />
     <ClCompile Include="..\Common\SNANNPredictor.cpp" />
-    <ClCompile Include="..\Common\SNLocalContraster.cpp" />
     <ClCompile Include="..\Common\SNTestNumbersLoader.cpp" />
     <ClCompile Include="..\Common\tinyxml.cpp" />
     <ClCompile Include="..\Common\tinyxmlerror.cpp" />
@@ -95,7 +94,6 @@
     <ClInclude Include="..\Common\SNANNConfigLoader.h" />
     <ClInclude Include="..\Common\SNANNFeatureEvaluator.h" />
     <ClInclude Include="..\Common\SNANNPredictor.h" />
-    <ClInclude Include="..\Common\SNLocalContraster.h" />
     <ClInclude Include="..\Common\SNTestNumbersLoader.h" />
     <ClInclude Include="..\Common\tinyxml.h" />
     <ClInclude Include="SNANNTrainer.h" />
@@ -107,7 +105,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties MocDir=".\GeneratedFiles\$(ConfigurationName)" UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" lupdateOptions="" lupdateOnBuild="0" lreleaseOptions="" Qt5Version_x0020_Win32="4.8.5" MocOptions="" />
+      <UserProperties MocDir=".\GeneratedFiles\$(ConfigurationName)" UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" lupdateOptions="" lupdateOnBuild="0" lreleaseOptions="" Qt5Version_x0020_Win32="4.8.5_x86" MocOptions="" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

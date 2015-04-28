@@ -27,12 +27,6 @@
     <ClCompile Include="SNPlateDetector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SNHistogramSegmentor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SNDigitsComparator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Common\SNANNConfigLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -57,18 +51,9 @@
     <ClCompile Include="SNMasterSegmentor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SNMasterSymbolRecognizer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SNPlateDetector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SNHistogramSegmentor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SNDigitsComparator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Common\SNANNConfigLoader.h">
@@ -91,9 +76,6 @@
     </ClInclude>
     <ClInclude Include="SNMasterRecognizerStructs.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SNMasterSymbolRecognizer.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

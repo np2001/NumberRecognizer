@@ -61,14 +61,21 @@ namespace SNNumberRecognizer
 		{
 			sprintf_s(str, sizeof(str), "<alph id=\"%i\" data=\"", (int32_t)c.first);
 			
-			res += str + ToHex(c.second.ConfigString) + "\" />\r\n";
+			res += str + ToHex(c.second.ConfigString) + "\">\r\n";
 
+			for (auto cc : c.second.CharClassIDs)
+			{
+				sprintf_s(str, sizeof(str), "<symclass id=\"%i\" displaysymbol=\"%c\"/>\r\n", (int32_t)cc.first, cc.second);
+				res += str;
+			}
+
+			res += "</alph>\r\n";
 			int r = 0;
 		}
 
-		return res;
-
 		res += "</ann_config>\r\n";
+
+		return res;
 	}
 	//----------------------------------------------------------------------------
 
@@ -84,6 +91,13 @@ namespace SNNumberRecognizer
 
 			std::string res = FromHex(text);
 			config[(AlphabetTypes)atoi(id)].ConfigString = res;
+
+			for (TiXmlElement* sym_class = n->FirstChildElement("symclass"); sym_class != NULL; sym_class = sym_class->NextSiblingElement("symclass"))
+			{
+				const char* sym = sym_class->Attribute("displaysymbol");
+				const char* sym_class_id = sym_class->Attribute("id");
+				config[(AlphabetTypes)atoi(id)].CharClassIDs[atoi(sym_class_id)].DisplaySymbol = sym[0];
+			}
 		}
 
 		return true;

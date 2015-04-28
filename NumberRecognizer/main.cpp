@@ -4,9 +4,7 @@
 #include "SNPlateDetector.h"
 #include <QFile>
 #include <QTextStream>
-#include "SNHistogramSegmentor.h"
 #include <opencv2/imgproc/imgproc.hpp>
-#include "SNDigitsComparator.h"
 #include <QTime>
 #include <iostream>
 #include <conio.h>
@@ -16,11 +14,9 @@
 #include <QDebug>
 #include "SNMasterRecognizer.h"
 #include "SNMasterSegmentor.h"
-#include "SNMasterSymbolRecognizer.h"
 
 SNMasterRecognizer mr;
 SNMasterSegmentor ms;
-SNMasterSymbolRecognizer msr;
 
 void LoadCascade(SNPlateDetector& pd, QString cascade_filename)
 {
@@ -55,20 +51,22 @@ int main(int argc, char *argv[])
 	SNNumberRecognizer::SNANNPredictor pred;
 	pred.Load(test_config);
 
-	cv::Mat image = cv::imread("e:/symbols6/plates/117.bmp", cv::IMREAD_GRAYSCALE);
+	cv::Mat image = cv::imread("f:/symbols6/plates/43.bmp", cv::IMREAD_GRAYSCALE);
 	cv::resize(image, image, image.size() * 1);
 
 	SNFigureGroups fgs;
 
 	QTime time;
 	time.start();
-	ms.Segment(image, fgs, 0, 255, 5);
+	ms.Segment(image, fgs, 100, 255, -1);
 	
 	cv::Mat debug_image;
 	ms.DebugFigureGroups(image, fgs, debug_image, 2);
 
 	SNNumberStats stats;
 	//msr.Process(image, fgs, stats);
+
+	SNNumberRecognizer::ANNPredictionResults results;
 
 	for (auto& fg : fgs)
 	{
@@ -78,59 +76,14 @@ int main(int argc, char *argv[])
 		{
 			cv::Mat symbol = cv::Mat(image, cv::Rect(f.left(), f.top(), f.Width(), f.Height())).clone();
 
-			float digit_weight;
-			int digit_class_id = pred.Predict(SNNumberRecognizer::DigitsAlphabet, symbol, eval, digit_weight);
+			pred.Predict(SNNumberRecognizer::DigitsAlphabet, symbol, eval, results);
 
-			char digit_char;
-			switch (digit_class_id)
-			{
-			case 0: digit_char = '0'; break;
-			case 1: digit_char = '1'; break;
-			case 2: digit_char = '2'; break;
-			case 3: digit_char = '3'; break;
-			case 4: digit_char = '4'; break;
-			case 5: digit_char = '5'; break;
-			case 6: digit_char = '6'; break;
-			case 7: digit_char = '7'; break;
-			case 8: digit_char = '8'; break;
-			case 9: digit_char = '9'; break;
+			stats.back()[results.front().Symbol] += results.front().Weight;
+			results.clear();
 
-			default:
-				digit_char = '?';
-				break;
-			}
-			
-			stats.back()[digit_char] += digit_weight;
-
-			float char_weight;
-			int char_class_id = pred.Predict(SNNumberRecognizer::LettersAlphabet, symbol, eval, char_weight);
-
-			char letter_char;
-			switch (char_class_id)
-			{
-			case 0: letter_char = 'A'; break;
-			case 1: letter_char = 'B'; break;
-			case 2: letter_char = 'E'; break;
-			case 3: letter_char = 'K'; break;
-			case 4: letter_char = 'M'; break;
-			case 5: letter_char = 'H'; break;
-			case 6: letter_char = 'O'; break;
-			case 7: letter_char = 'P'; break;
-			case 8: letter_char = 'C'; break;
-			case 9: letter_char = 'T'; break;
-			case 10: letter_char = 'Y'; break;
-			case 11: letter_char = 'X'; break;
-			default:
-				letter_char = '?';
-				break;
-			}
-
-			stats.back()[letter_char] += char_weight;
-
-			//std::pair<char, double> res = ProcessChar(symbol);
-			//std::pair<char, double> res2 = ProcessNum(symbol);
-			//stats.back()[res.first] += res.second;
-			//stats.back()[res2.first] += res2.second;
+			pred.Predict(SNNumberRecognizer::LettersAlphabet, symbol, eval, results);
+			stats.back()[results.front().Symbol] += results.front().Weight;
+			results.clear();
 		}
 	}
 
@@ -141,8 +94,7 @@ int main(int argc, char *argv[])
 	getch();
 
 	LoadCascade(pd, "cascade_2.xml");
-
-	int32_t total_count = 0;
+		int32_t total_count = 0;
 	int32_t total_correct_count = 0;
 	int32_t total_incorrect_count = 0;
 	int32_t total_unrecognized_count = 0;
@@ -152,7 +104,6 @@ int main(int argc, char *argv[])
 
 	// current video frame
 	cv::Mat frame;
-	SNNumberRecognizer::SNHistogramSegmentor hs;
 	
 	cv::Size window_size = cv::Size(8, 14);
 
@@ -204,14 +155,14 @@ int main(int argc, char *argv[])
 							cv::Mat features = eval.Features(symbol_image);
 
 							float weight;
-							int class_id = pred.Predict(SNNumberRecognizer::DigitsAlphabet, symbol_image, eval, weight);
-							if (class_id != -1/* && class_id == 4*/ && weight > 0.5)
-							{
-								char text[20];
-								sprintf_s(text, "%i", class_id);
-								cv::putText(test_image, text, cv::Point(j * 10, i * 10), CV_FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 0, 250));
-								cv::rectangle(test_image, cv::Rect(j * 10, i * 10, window_size.width * 10, window_size.height * 10), cv::Scalar(255, 0, 0));
-							}
+							//int class_id = pred.Predict(SNNumberRecognizer::DigitsAlphabet, symbol_image, eval, weight);
+							//if (class_id != -1/* && class_id == 4*/ && weight > 0.5)
+							//{
+							//	char text[20];
+							//	sprintf_s(text, "%i", class_id);
+							//	cv::putText(test_image, text, cv::Point(j * 10, i * 10), CV_FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 0, 250));
+							//	cv::rectangle(test_image, cv::Rect(j * 10, i * 10, window_size.width * 10, window_size.height * 10), cv::Scalar(255, 0, 0));
+							//}
 
 						}
 					}

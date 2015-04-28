@@ -76,14 +76,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Common\SNLocalContraster.cpp" />
     <ClCompile Include="..\Common\SNNumberRecognizerDefines.cpp" />
     <ClCompile Include="..\Common\SNTestNumbersLoader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SNSymbolExtractor.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Common\SNLocalContraster.h" />
     <ClInclude Include="..\Common\SNNumberRecognizerDefines.h" />
     <ClInclude Include="..\Common\SNTestNumbersLoader.h" />
     <ClInclude Include="SNSymbolExtractor.h" />
@@ -93,7 +91,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties MocDir=".\GeneratedFiles\$(ConfigurationName)" UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" lupdateOptions="" lupdateOnBuild="0" lreleaseOptions="" Qt5Version_x0020_Win32="4.8.5" MocOptions="" />
+      <UserProperties MocDir=".\GeneratedFiles\$(ConfigurationName)" UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" lupdateOptions="" lupdateOnBuild="0" lreleaseOptions="" Qt5Version_x0020_Win32="4.8.5_x86" MocOptions="" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

@@ -118,11 +118,11 @@ void TestPlate(std::string filename, SNNumberRecognizer::SNANNConfigMap config)
 		{
 			cv::Mat window = cv::Mat(gray_image, cv::Rect(x, y, window_w, window_h));
 			float weight;
-			int cl = pred.Predict(SNNumberRecognizer::DigitsAlphabet, window, eval, weight);
+			/*int cl = pred.Predict(SNNumberRecognizer::DigitsAlphabet, window, eval, weight);
 			if (cl >= 0 && weight > 0.8)
 			{
 				cv::rectangle(color_image, cv::Rect(x * 10, y * 10, window_w * 10, window_h * 10), cv::Scalar(255, 0, 0));
-			}
+			}*/
 		}
 	}
 
@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
 
 	SNANNFeatureEvaluator eval;
 
-	QString train_alph_config_file = "e:\\symbols6\\alphabets_config.xml";
+	QString train_alph_config_file = "f:\\symbols5\\alphabets_config.xml";
 	TNL.LoadSymbols(train_alphabets, train_alph_config_file);
 	TNL.EvaluateFeatures(train_alphabets, eval);
 
@@ -158,7 +158,6 @@ int main(int argc, char *argv[])
 
 	SNNumberRecognizer::SNANNConfigMap config;
 
-	
 	qDebug() << "Training begins";
 	trainer.Train(train_alphabets, 100, config);
 	qDebug() << "Training finished";
@@ -174,13 +173,13 @@ int main(int argc, char *argv[])
 
 	f1.close();
 
-	SNNumberRecognizer::ANNAlphabets eval_alphabets;
+	//SNNumberRecognizer::ANNAlphabets eval_alphabets;
 
-	QString eval_alph_config_file = "e:\\symbols4\\alphabets_config.xml";
-	TNL.LoadSymbols(eval_alphabets, eval_alph_config_file);
-	TNL.EvaluateFeatures(eval_alphabets, eval);
+	//QString eval_alph_config_file = "e:\\symbols4\\alphabets_config.xml";
+	//TNL.LoadSymbols(eval_alphabets, eval_alph_config_file);
+	//TNL.EvaluateFeatures(eval_alphabets, eval);
 
-	Evaluate(eval_alphabets, config);
+	//Evaluate(eval_alphabets, config);
 
 	return a.exec();
 }

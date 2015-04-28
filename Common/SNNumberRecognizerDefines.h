@@ -41,9 +41,12 @@ namespace SNNumberRecognizer
 	//------------------------------------------------------------------------------
 	typedef std::map<AlphabetTypes, ANNAlphabet> ANNAlphabets;
 	//------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------
+
 	struct SNANNConfig
 	{
 		std::string ConfigString;
+		ANNSymbolClassesMap CharClassIDs;
 	};
 	//------------------------------------------------------------------------------
 	typedef std::map<AlphabetTypes, SNANNConfig> SNANNConfigMap;
@@ -51,41 +54,41 @@ namespace SNNumberRecognizer
 
 	typedef std::list<cv::Mat> SNPlateList;
 
-	struct SNANNPredictionResult
-	{
-		int32_t ClassID;
-		float Weight;
-		cv::Point TopLeft;
-		cv::Size WinSize;
-	};
-	//------------------------------------------------------------------------------
-	typedef std::vector<SNANNPredictionResult> SNANNPredictionResultList;
-	//------------------------------------------------------------------------------
+	//struct SNANNPredictionResult
+	//{
+	//	int32_t ClassID;
+	//	float Weight;
+	//	cv::Point TopLeft;
+	//	cv::Size WinSize;
+	//};
+	////------------------------------------------------------------------------------
+	//typedef std::vector<SNANNPredictionResult> SNANNPredictionResultList;
+	////------------------------------------------------------------------------------
 
-	struct SNANNLinePredictionResults : public std::map<int32_t, SNANNPredictionResultList>
-	{
-		float WeightSum;
-		int32_t LineNum;
-	};
+	//struct SNANNLinePredictionResults : public std::map<int32_t, SNANNPredictionResultList>
+	//{
+	//	float WeightSum;
+	//	int32_t LineNum;
+	//};
+	////------------------------------------------------------------------------------
+	//typedef std::vector<SNANNLinePredictionResults> SNANNPredictionResults;
 	//------------------------------------------------------------------------------
-	typedef std::vector<SNANNLinePredictionResults> SNANNPredictionResults;
+	//bool SortANNPredictionResults(const SNANNLinePredictionResults& i, const SNANNLinePredictionResults& j);
 	//------------------------------------------------------------------------------
-	bool SortANNPredictionResults(const SNANNLinePredictionResults& i, const SNANNLinePredictionResults& j);
-	//------------------------------------------------------------------------------
-	typedef std::map<int32_t, SNANNPredictionResult> SNColumnPredictionResults;
-	//------------------------------------------------------------------------------
-	struct SNPlateVariant : public SNANNPredictionResultList
-	{
-		float WeightSum;
-		std::string Number;
-	};
-	//------------------------------------------------------------------------------
-	typedef std::vector<SNPlateVariant> SNPlateVariants;
-	//------------------------------------------------------------------------------
-	typedef std::map<std::string, float> SNPlateVariantsRating;
-	//------------------------------------------------------------------------------
+	//typedef std::map<int32_t, SNANNPredictionResult> SNColumnPredictionResults;
+	////------------------------------------------------------------------------------
+	//struct SNPlateVariant : public SNANNPredictionResultList
+	//{
+	//	float WeightSum;
+	//	std::string Number;
+	//};
+	////------------------------------------------------------------------------------
+	//typedef std::vector<SNPlateVariant> SNPlateVariants;
+	////------------------------------------------------------------------------------
+	//typedef std::map<std::string, float> SNPlateVariantsRating;
+	////------------------------------------------------------------------------------
 
-	bool SortANNPredictionResults(const SNANNLinePredictionResults& i, const SNANNLinePredictionResults& j);
+	//bool SortANNPredictionResults(const SNANNLinePredictionResults& i, const SNANNLinePredictionResults& j);
 }
 //---------------------------------------------------------------------
 #endif // SNNumberDefines_h__

@@ -23,6 +23,14 @@ void SNMasterSegmentor::Segment(const cv::Mat& gray_image, SNFigureGroups& group
 {
 	SNFigureGroup group;
 
+	if (gray_step == -1)
+	{
+		cv::Scalar mean = cv::sum(gray_image) / gray_image.cols / gray_image.rows;
+		min_gray_level = mean[0] * 0.7;
+		max_gray_level = mean[0] * 1.3;
+		gray_step = (max_gray_level - min_gray_level) / 20;
+	}
+	
 	for (int32_t gray_level = min_gray_level; gray_level <= max_gray_level; gray_level += gray_step)
 	{
 		cv::Mat img_bw = gray_image > gray_level;

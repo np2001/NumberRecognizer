@@ -34,6 +34,8 @@ namespace SNNumberRecognizer
 			int idx = 0;
 			for (auto symbol_class : alphabet.second.SymbolClasses)
 			{
+				ann_config[alphabet.first].CharClassIDs[symbol_class.first].DisplaySymbol = symbol_class.second.DisplaySymbol;
+
 				for (auto i : symbol_class.second)
 				{
 					for (int j = 0; j < features_size; ++j)

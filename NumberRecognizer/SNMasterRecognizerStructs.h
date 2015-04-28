@@ -233,4 +233,13 @@ private:
 	SNNumberData& operator=(const SNNumberData& other);
 };
 //------------------------------------------------------
+
+struct SNSymbolStats : public std::map<char, double>
+{
+
+};
+
+typedef std::vector<SNSymbolStats> SNNumberStats;
+//------------------------------------------------------
+
 #endif // SNMasterRecognizerStructs_h__
