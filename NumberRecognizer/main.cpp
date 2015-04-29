@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 	SNNumberRecognizer::SNANNPredictor pred;
 	pred.Load(test_config);
 
-	cv::Mat image = cv::imread("e:/symbols7/plates/63.bmp", cv::IMREAD_GRAYSCALE);
+	cv::Mat image = cv::imread("e:/symbols7/plates/76.bmp", cv::IMREAD_GRAYSCALE);
 	cv::resize(image, image, image.size() * 1);
 
 	/*SNPlateModel pm;

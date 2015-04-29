@@ -112,13 +112,15 @@ float SNModelMatcher::MatchModel(const cv::Mat& gray_image, const SNFigureGroups
 	{
 		for (int j = 1; j <= 2; ++j)
 		{
-			for (auto& f1 : fgs[i])
+			//for (auto& f1 : fgs[i])
+			for (int m = 0; m < fgs[i].size(); ++m)
 			{
-				cv::Rect r1 = cv::Rect(f1.left(), f1.top(), f1.Width(), f1.Height());
+				cv::Rect r1 = cv::Rect(fgs[i][m].left(), fgs[i][m].top(), fgs[i][m].Width(), fgs[i][m].Height());
 
-				for (auto& f2 : fgs[i + j])
+				//for (auto& f2 : fgs[i + j])
+				for (int n = 0; n < fgs[i + j].size(); ++n)
 				{
-					cv::Rect r2 = cv::Rect(f2.left(), f2.top(), f2.Width(), f2.Height());
+					cv::Rect r2 = cv::Rect(fgs[i + j][n].left(), fgs[i + j][n].top(), fgs[i + j][n].Width(), fgs[i + j][n].Height());
 
 					SNPlateModel pm;
 					BuildModel(r1, r2, pm);
@@ -151,11 +153,11 @@ float SNModelMatcher::MatchModel(const cv::Mat& gray_image, const SNFigureGroups
 
 					compare_ratio_sum /= compare_ratio_count;
 
-					/*char c[100];
+					char c[100];
 					sprintf_s(c, 100, "CR = %2.2f\r\n", compare_ratio_sum);
 					OutputDebugStringA(c);
 
-					DebugModel(gray_image, pm);*/
+					DebugModel(gray_image, pm);
 				}
 			}
 		}
