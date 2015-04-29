@@ -46,7 +46,8 @@ void SNMasterSegmentor::Segment(const cv::Mat& gray_image, SNFigureGroups& group
 
 	RemoveEqualRects(group);
 
-	GroupByX(group, groups, gray_image.cols / 20);
+	//GroupByX(group, groups, gray_image.cols / 20);
+	GroupByIntersect(group, groups);
 
 	//MakeGroups(group, groups);
 	//// выкидываем элементы, что выходят за размеры номера, предпологаем что номер не шире 7 * ширина первого элемента
@@ -481,6 +482,41 @@ void SNMasterSegmentor::GroupByX(const SNFigureGroup& figs, SNFigureGroups& grou
 		}
 
 		groups.back().push_back(f);
+	}
+}
+//------------------------------------------------------
+
+void SNMasterSegmentor::GroupByIntersect(const SNFigureGroup& figs, SNFigureGroups& groups)
+{
+	for (auto f : figs)
+	{
+		if (groups.empty())
+		{
+			SNFigureGroup new_group;
+			groups.push_back(new_group);
+		}
+
+		if (groups.back().empty())
+		{
+			groups.back().push_back(f);
+		}
+		else
+		{
+			cv::Rect r1 = cv::Rect(groups.back().front().left(), groups.back().front().top(), groups.back().front().Width(), groups.back().front().Height());
+			cv::Rect r2 = cv::Rect(f.left(), f.top(), f.Width(), f.Height());
+			cv::Rect intersect_rect = r1 & r2;
+			if (intersect_rect.area() > 0.5 * r2.area())
+			{
+				groups.back().push_back(f);
+			}
+			else
+			{
+				SNFigureGroup new_group;
+				groups.push_back(new_group);
+				groups.back().push_back(f);
+			}
+		}
+		
 	}
 }
 //------------------------------------------------------

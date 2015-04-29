@@ -22,6 +22,7 @@ private:
 	bool AngleIsEqual(int an1, int an2);
 	void RemoveEqualRects(SNFigureGroup& figs);
 	void GroupByX(const SNFigureGroup& figs, SNFigureGroups& groups, int32_t group_step);
+	void GroupByIntersect(const SNFigureGroup& figs, SNFigureGroups& groups);
 
 	void FigsRemoveTooLongByXFromFirst(SNFigureGroups& groups);
 	void GroupsRemoveTooSmall(SNFigureGroups& groups);

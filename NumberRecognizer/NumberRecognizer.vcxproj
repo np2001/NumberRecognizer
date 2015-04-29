@@ -83,6 +83,7 @@
     <ClCompile Include="..\Common\tinyxmlerror.cpp" />
     <ClCompile Include="..\Common\tinyxmlparser.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SNFormatMatcher.cpp" />
     <ClCompile Include="SNMasterRecognizer.cpp" />
     <ClCompile Include="SNMasterSegmentor.cpp" />
     <ClCompile Include="SNModelMatcher.cpp" />
@@ -93,6 +94,7 @@
     <ClInclude Include="..\Common\SNANNFeatureEvaluator.h" />
     <ClInclude Include="..\Common\SNANNPredictor.h" />
     <ClInclude Include="..\Common\tinyxml.h" />
+    <ClInclude Include="SNFormatMatcher.h" />
     <ClInclude Include="SNMasterRecognizer.h" />
     <ClInclude Include="SNMasterRecognizerStructs.h" />
     <ClInclude Include="SNMasterSegmentor.h" />
@@ -104,7 +106,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties MocDir=".\GeneratedFiles\$(ConfigurationName)" UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" lupdateOptions="" lupdateOnBuild="0" lreleaseOptions="" Qt5Version_x0020_Win32="4.8.5" MocOptions="" />
+      <UserProperties MocDir=".\GeneratedFiles\$(ConfigurationName)" UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" lupdateOptions="" lupdateOnBuild="0" lreleaseOptions="" Qt5Version_x0020_Win32="4.8.5_x86" MocOptions="" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

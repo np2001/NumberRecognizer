@@ -234,9 +234,10 @@ private:
 };
 //------------------------------------------------------
 
-struct SNSymbolStats : public std::map<char, double>
+struct SNSymbolStats 
 {
-
+	std::map<char, double> DigitsStats;
+	std::map<char, double> LetterStats;
 };
 
 typedef std::vector<SNSymbolStats> SNNumberStats;

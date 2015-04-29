@@ -14,9 +14,13 @@
 #include <QDebug>
 #include "SNMasterRecognizer.h"
 #include "SNMasterSegmentor.h"
+#include "SNModelMatcher.h"
+#include "SNFormatMatcher.h"
 
 SNMasterRecognizer mr;
 SNMasterSegmentor ms;
+
+SNModelMatcher mm;
 
 void LoadCascade(SNPlateDetector& pd, QString cascade_filename)
 {
@@ -37,6 +41,7 @@ int main(int argc, char *argv[])
 	SNPlateDetector pd;
 
 	SNANNFeatureEvaluator eval;
+	SNFormatMatcher fm;
 
 	SNNumberRecognizer::SNANNConfigLoader config_loader;
 
@@ -51,9 +56,13 @@ int main(int argc, char *argv[])
 	SNNumberRecognizer::SNANNPredictor pred;
 	pred.Load(test_config);
 
-	cv::Mat image = cv::imread("e:/symbols6/plates/43.bmp", cv::IMREAD_GRAYSCALE);
+	cv::Mat image = cv::imread("f:/symbols6/plates/56.bmp", cv::IMREAD_GRAYSCALE);
 	cv::resize(image, image, image.size() * 1);
 
+	/*SNPlateModel pm;
+	mm.BuildModel(cv::Rect(53, 13, 8, 11), cv::Rect(64, 9, 11, 14), pm);
+	mm.DebugModel(image, pm);*/
+	
 	SNFigureGroups fgs;
 
 	QTime time;
@@ -63,10 +72,16 @@ int main(int argc, char *argv[])
 	cv::Mat debug_image;
 	ms.DebugFigureGroups(image, fgs, debug_image, 2);
 
+	mm.MatchModel(image, fgs);
+
 	SNNumberStats stats;
 	//msr.Process(image, fgs, stats);
 
 	SNNumberRecognizer::ANNPredictionResults results;
+
+	int t = time.elapsed();
+
+	qDebug() << t;
 
 	for (auto& fg : fgs)
 	{
@@ -74,22 +89,21 @@ int main(int argc, char *argv[])
 
 		for (auto& f : fg)
 		{
-			cv::Mat symbol = cv::Mat(image, cv::Rect(f.left(), f.top(), f.Width(), f.Height())).clone();
+			cv::Mat symbol = cv::Mat(image, cv::Rect(f.left(), f.top(), f.Width() + 1, f.Height() + 1)).clone();
 
 			pred.Predict(SNNumberRecognizer::DigitsAlphabet, symbol, eval, results);
 
-			stats.back()[results.front().Symbol] += results.front().Weight;
+			stats.back().DigitsStats[results.front().Symbol] += results.front().Weight;
 			results.clear();
 
 			pred.Predict(SNNumberRecognizer::LettersAlphabet, symbol, eval, results);
-			stats.back()[results.front().Symbol] += results.front().Weight;
+			stats.back().LetterStats[results.front().Symbol] += results.front().Weight;
 			results.clear();
 		}
 	}
 
-	int t = time.elapsed();
-
-	qDebug() << t;
+	SNNumberVariants variants;
+	fm.MatchNumbers(stats, variants);
 
 	getch();
 
