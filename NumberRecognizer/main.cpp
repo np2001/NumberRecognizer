@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 	SNNumberRecognizer::SNANNPredictor pred;
 	pred.Load(test_config);
 
-	cv::Mat image = cv::imread("f:/symbols6/plates/56.bmp", cv::IMREAD_GRAYSCALE);
+	cv::Mat image = cv::imread("e:/symbols7/plates/63.bmp", cv::IMREAD_GRAYSCALE);
 	cv::resize(image, image, image.size() * 1);
 
 	/*SNPlateModel pm;
@@ -79,10 +79,6 @@ int main(int argc, char *argv[])
 
 	SNNumberRecognizer::ANNPredictionResults results;
 
-	int t = time.elapsed();
-
-	qDebug() << t;
-
 	for (auto& fg : fgs)
 	{
 		stats.push_back(SNSymbolStats());
@@ -103,7 +99,12 @@ int main(int argc, char *argv[])
 	}
 
 	SNNumberVariants variants;
+
 	fm.MatchNumbers(stats, variants);
+
+	int t = time.elapsed();
+
+	qDebug() << t;
 
 	getch();
 

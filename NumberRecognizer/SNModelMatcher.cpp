@@ -1,5 +1,6 @@
 #include "SNModelMatcher.h"
 #include <opencv2\imgproc\imgproc.hpp>
+#include <windows.h>
 //------------------------------------------------------
 
 SNModelMatcher::SNModelMatcher()
@@ -107,7 +108,7 @@ float SNModelMatcher::MatchModel(const cv::Mat& gray_image, const SNFigureGroups
 {
 	int min_symbols = 6;
 
-	for (int i = 0; i < fgs.size() - min_symbols; ++i)
+	for (int i = 0; i <= fgs.size() - min_symbols; ++i)
 	{
 		for (int j = 1; j <= 2; ++j)
 		{
@@ -121,7 +122,40 @@ float SNModelMatcher::MatchModel(const cv::Mat& gray_image, const SNFigureGroups
 
 					SNPlateModel pm;
 					BuildModel(r1, r2, pm);
-					//DebugModel(gray_image, pm);
+
+					float compare_ratio_sum = 0.0f;
+					int compare_ratio_count = 0;
+
+					for (int k = 0; k < pm.size(); ++k)
+					{
+						if (i + k >= fgs.size())
+							break;
+
+						float best_compare_ratio = 0.0f;
+
+						cv::Rect r3 = cv::Rect(pm[k].x, pm[k].y, pm[k].width, pm[k].height);
+
+						for (int l = 0; l < fgs[i + k].size(); ++l)
+						{
+							SNFigure f4 = fgs[i + k][l];
+							cv::Rect r4 = cv::Rect(f4.left(), f4.top(), f4.Width(), f4.Height());
+
+							float compare_ratio = (r3 & r4).area() * 1.0 / (r3 | r4).area();
+							if (compare_ratio > best_compare_ratio)
+								best_compare_ratio = compare_ratio;
+						}
+
+						compare_ratio_sum += best_compare_ratio;
+						compare_ratio_count++;
+					}
+
+					compare_ratio_sum /= compare_ratio_count;
+
+					/*char c[100];
+					sprintf_s(c, 100, "CR = %2.2f\r\n", compare_ratio_sum);
+					OutputDebugStringA(c);
+
+					DebugModel(gray_image, pm);*/
 				}
 			}
 		}

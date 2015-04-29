@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 	QCoreApplication a(argc, argv);
 
 	QString base_path = "e:/test_images";
-	QString out_path = "e:/symbols6";
+	QString out_path = "e:/symbols7";
 
 	
 	SNSymbolExtractor SE;
