@@ -15,6 +15,7 @@ public:
 		Top = -1;
 		Bottom = -1;
 		TooBig = false;
+		ModelMatchRatio = 0.0f;
 	}
 
 	SNFigure(pair_int center, pair_int size)
@@ -24,6 +25,7 @@ public:
 		, Bottom(center.second + size.second / 2 + 1)
 		, TooBig(false)
 	{
+		ModelMatchRatio = 0.0f;
 	}
 
 	SNFigure(int left, int right, int top, int bottom)
@@ -149,12 +151,23 @@ public:
 			&& Bottom == other.Bottom;
 	}
 
+	void SetModelMatchRatio(float ratio)
+	{
+		ModelMatchRatio = ratio;
+	}
+
+	float GetModelMatchRatio()
+	{
+		return ModelMatchRatio;
+	}
+
 private:
 	int Left;
 	int Right;
 	int Top;
 	int Bottom;
 	bool TooBig;
+	float ModelMatchRatio;
 };
 //---------------------------------------------------
 typedef std::vector<SNFigure> SNFigureGroup;

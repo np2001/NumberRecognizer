@@ -56,55 +56,70 @@ int main(int argc, char *argv[])
 	SNNumberRecognizer::SNANNPredictor pred;
 	pred.Load(test_config);
 
-	cv::Mat image = cv::imread("e:/symbols7/plates/76.bmp", cv::IMREAD_GRAYSCALE);
-	cv::resize(image, image, image.size() * 1);
+	srand(QDateTime::currentDateTime().time().msec());
 
-	/*SNPlateModel pm;
-	mm.BuildModel(cv::Rect(53, 13, 8, 11), cv::Rect(64, 9, 11, 14), pm);
-	mm.DebugModel(image, pm);*/
-	
-	SNFigureGroups fgs;
-
-	QTime time;
-	time.start();
-	ms.Segment(image, fgs, 100, 255, -1);
-	
-	cv::Mat debug_image;
-	ms.DebugFigureGroups(image, fgs, debug_image, 2);
-
-	mm.MatchModel(image, fgs);
-
-	SNNumberStats stats;
-	//msr.Process(image, fgs, stats);
-
-	SNNumberRecognizer::ANNPredictionResults results;
-
-	for (auto& fg : fgs)
+	while (true)
 	{
-		stats.push_back(SNSymbolStats());
+		int i = rand() % 1600;
+		char c[1000];
+		sprintf_s(c, sizeof(c), "f:/symbols6/plates/%i.bmp", i);
 
-		for (auto& f : fg)
+		cv::Mat image = cv::imread(c, cv::IMREAD_GRAYSCALE);
+		cv::resize(image, image, image.size() * 1);
+
+		SNFigureGroups fgs;
+
+		QTime time;
+		time.start();
+		ms.Segment(image, fgs, 100, 255, -1);
+
+		cv::Mat debug_image;
+		ms.DebugFigureGroups(image, fgs, debug_image, 2);
+
+		mm.MatchModel(image, fgs);
+
+		SNNumberStats stats;
+		//msr.Process(image, fgs, stats);
+
+		SNNumberRecognizer::ANNPredictionResults results;
+
+		for (auto& fg : fgs)
 		{
-			cv::Mat symbol = cv::Mat(image, cv::Rect(f.left(), f.top(), f.Width() + 1, f.Height() + 1)).clone();
+			stats.push_back(SNSymbolStats());
 
-			pred.Predict(SNNumberRecognizer::DigitsAlphabet, symbol, eval, results);
+			for (auto& f : fg)
+			{
+				cv::Mat symbol = cv::Mat(image, cv::Rect(f.left(), f.top(), f.Width() + 1, f.Height() + 1)).clone();
 
-			stats.back().DigitsStats[results.front().Symbol] += results.front().Weight;
-			results.clear();
+				pred.Predict(SNNumberRecognizer::DigitsAlphabet, symbol, eval, results);
 
-			pred.Predict(SNNumberRecognizer::LettersAlphabet, symbol, eval, results);
-			stats.back().LetterStats[results.front().Symbol] += results.front().Weight;
-			results.clear();
+				//stats.back().DigitsStats[results.front().Symbol] += results.front().Weight;
+				stats.back().DigitsStats[results.front().Symbol] += f.GetModelMatchRatio();
+				results.clear();
+
+				pred.Predict(SNNumberRecognizer::LettersAlphabet, symbol, eval, results);
+				//stats.back().LetterStats[results.front().Symbol] += results.front().Weight;
+				stats.back().LetterStats[results.front().Symbol] += f.GetModelMatchRatio();
+				results.clear();
+			}
 		}
+
+		SNNumberVariants variants;
+
+		fm.MatchNumbers(stats, variants);
+
+		cv::resize(image, image, image.size() * 4);
+
+		if (!variants.empty())
+		{
+			cv:putText(image, variants.front().Number, cv::Point(5, image.rows - 5), CV_FONT_HERSHEY_PLAIN, 1, cv::Scalar(255, 0, 0));
+		}
+
+		int t = time.elapsed();
+
+		qDebug() << t;
 	}
 
-	SNNumberVariants variants;
-
-	fm.MatchNumbers(stats, variants);
-
-	int t = time.elapsed();
-
-	qDebug() << t;
 
 	getch();
 

@@ -19,9 +19,11 @@ SNFormatMatcher::~SNFormatMatcher()
 
 void SNFormatMatcher::MatchNumbers(const SNNumberStats& stats, SNNumberVariants& result)
 {
-	for (int i = 0; i <= stats.size() - Format.size(); ++i)
+	for (int i = 0; i <= (int)stats.size() - (int)Format.size(); ++i)
 	{
 		SNNumberVariant var;
+		var.Weight = 0.0f;
+
 		for (int j = 0; j < Format.size(); ++j)
 		{
 			float weight = -10000;
@@ -57,5 +59,12 @@ void SNFormatMatcher::MatchNumbers(const SNNumberStats& stats, SNNumberVariants&
 
 		result.push_back(var);
 	}
+
+
+	sort(result.begin(), result.end(),
+		[](const SNNumberVariant & a, const SNNumberVariant & b) -> bool
+	{
+		return a.Weight > b.Weight;
+	});
 }
 //--------------------------------------------------------------

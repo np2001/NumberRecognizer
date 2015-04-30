@@ -22,7 +22,7 @@ public:
 	void AddModelElement(const cv::Rect& rect);
 	void BuildModel(const cv::Rect& r1, const cv::Rect& r2, SNPlateModel& out_model);
 	void DebugModel(const cv::Mat& gray_image, SNPlateModel& out_model, int scale = 1);
-	float MatchModel(const cv::Mat& gray_image, const SNFigureGroups fgs);
+	float MatchModel(const cv::Mat& gray_image, SNFigureGroups& fgs);
 private:
 	SNPlateModel Model;
 	SNPlateModelCenterVectors CenterVectors;

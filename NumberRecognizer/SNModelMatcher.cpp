@@ -104,11 +104,17 @@ void SNModelMatcher::DebugModel(const cv::Mat& gray_image, SNPlateModel& out_mod
 }
 //------------------------------------------------------
 
-float SNModelMatcher::MatchModel(const cv::Mat& gray_image, const SNFigureGroups fgs)
+float SNModelMatcher::MatchModel(const cv::Mat& gray_image, SNFigureGroups& fgs)
 {
 	int min_symbols = 6;
 
-	for (int i = 0; i <= fgs.size() - min_symbols; ++i)
+	int best_i = 0;
+	int best_j = 0;
+	int best_m = 0;
+	int best_n = 0;
+	float best_compare_ratio_sum = 0.0f;
+
+	for (int i = 0; i <= (int)fgs.size() - min_symbols; ++i)
 	{
 		for (int j = 1; j <= 2; ++j)
 		{
@@ -153,12 +159,51 @@ float SNModelMatcher::MatchModel(const cv::Mat& gray_image, const SNFigureGroups
 
 					compare_ratio_sum /= compare_ratio_count;
 
-					char c[100];
+					if (compare_ratio_sum > best_compare_ratio_sum)
+					{
+						best_i = i;
+						best_j = j;
+						best_m = m;
+						best_n = n;
+
+						best_compare_ratio_sum = compare_ratio_sum;
+					}
+
+					/*char c[100];
 					sprintf_s(c, 100, "CR = %2.2f\r\n", compare_ratio_sum);
 					OutputDebugStringA(c);
 
-					DebugModel(gray_image, pm);
+					DebugModel(gray_image, pm);*/
 				}
+			}
+		}
+	}
+
+	{
+		cv::Rect r1 = cv::Rect(fgs[best_i][best_m].left(), fgs[best_i][best_m].top(), fgs[best_i][best_m].Width(), fgs[best_i][best_m].Height());
+		cv::Rect r2 = cv::Rect(fgs[best_i + best_j][best_n].left(), fgs[best_i + best_j][best_n].top(), fgs[best_i + best_j][best_n].Width(), fgs[best_i + best_j][best_n].Height());
+
+		SNPlateModel pm;
+		BuildModel(r1, r2, pm);
+
+		DebugModel(gray_image, pm);
+
+		for (int k = 0; k < pm.size(); ++k)
+		{
+			if (best_i + k >= fgs.size())
+				break;
+
+			float best_compare_ratio = 0.0f;
+
+			cv::Rect r3 = cv::Rect(pm[k].x, pm[k].y, pm[k].width, pm[k].height);
+
+			for (int l = 0; l < fgs[best_i + k].size(); ++l)
+			{
+				SNFigure f4 = fgs[best_i + k][l];
+				cv::Rect r4 = cv::Rect(f4.left(), f4.top(), f4.Width(), f4.Height());
+
+				float compare_ratio = (r3 & r4).area() * 1.0 / (r3 | r4).area();
+				fgs[best_i + k][l].SetModelMatchRatio(compare_ratio);
 			}
 		}
 	}
