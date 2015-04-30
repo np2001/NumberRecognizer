@@ -16,11 +16,9 @@
 #include "SNMasterSegmentor.h"
 #include "SNModelMatcher.h"
 #include "SNFormatMatcher.h"
+#include "SNPlateRecognizer.h"
 
-SNMasterRecognizer mr;
-SNMasterSegmentor ms;
-
-SNModelMatcher mm;
+SNNumberRecognizer::SNPlateRecognizer pr;
 
 void LoadCascade(SNPlateDetector& pd, QString cascade_filename)
 {
@@ -40,21 +38,12 @@ int main(int argc, char *argv[])
 
 	SNPlateDetector pd;
 
-	SNANNFeatureEvaluator eval;
-	SNFormatMatcher fm;
-
-	SNNumberRecognizer::SNANNConfigLoader config_loader;
-
-	SNNumberRecognizer::SNANNConfigMap test_config;
 	QFile f("../ANNTrainer/best.ann");
 	f.open(QIODevice::ReadOnly);
 
 	QByteArray cfg = f.readAll();
-	config_loader.Load(cfg.data(), test_config);
+	pr.InitRecognizer(cfg.data());
 	f.close();
-
-	SNNumberRecognizer::SNANNPredictor pred;
-	pred.Load(test_config);
 
 	srand(QDateTime::currentDateTime().time().msec());
 
@@ -65,48 +54,19 @@ int main(int argc, char *argv[])
 		sprintf_s(c, sizeof(c), "f:/symbols6/plates/%i.bmp", i);
 
 		cv::Mat image = cv::imread(c, cv::IMREAD_GRAYSCALE);
+
+		assert(image.size().area());
+
 		cv::resize(image, image, image.size() * 1);
 
-		SNFigureGroups fgs;
-
+		SNNumberVariants variants;
+		
 		QTime time;
 		time.start();
-		ms.Segment(image, fgs, 100, 255, -1);
 
-		cv::Mat debug_image;
-		ms.DebugFigureGroups(image, fgs, debug_image, 2);
+		pr.RecognizePlate(image, variants);
 
-		mm.MatchModel(image, fgs);
-
-		SNNumberStats stats;
-		//msr.Process(image, fgs, stats);
-
-		SNNumberRecognizer::ANNPredictionResults results;
-
-		for (auto& fg : fgs)
-		{
-			stats.push_back(SNSymbolStats());
-
-			for (auto& f : fg)
-			{
-				cv::Mat symbol = cv::Mat(image, cv::Rect(f.left(), f.top(), f.Width() + 1, f.Height() + 1)).clone();
-
-				pred.Predict(SNNumberRecognizer::DigitsAlphabet, symbol, eval, results);
-
-				//stats.back().DigitsStats[results.front().Symbol] += results.front().Weight;
-				stats.back().DigitsStats[results.front().Symbol] += f.GetModelMatchRatio();
-				results.clear();
-
-				pred.Predict(SNNumberRecognizer::LettersAlphabet, symbol, eval, results);
-				//stats.back().LetterStats[results.front().Symbol] += results.front().Weight;
-				stats.back().LetterStats[results.front().Symbol] += f.GetModelMatchRatio();
-				results.clear();
-			}
-		}
-
-		SNNumberVariants variants;
-
-		fm.MatchNumbers(stats, variants);
+		assert(image.size().area());
 
 		cv::resize(image, image, image.size() * 4);
 
@@ -182,7 +142,7 @@ int main(int argc, char *argv[])
 						for (int j = 0; j < gray_image.cols - window_size.width; ++j)
 						{
 							cv::Mat symbol_image = cv::Mat(gray_image, cv::Rect(j, i, window_size.width, window_size.height));
-							cv::Mat features = eval.Features(symbol_image);
+							//cv::Mat features = eval.Features(symbol_image);
 
 							float weight;
 							//int class_id = pred.Predict(SNNumberRecognizer::DigitsAlphabet, symbol_image, eval, weight);

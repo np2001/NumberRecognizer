@@ -91,4 +91,17 @@ namespace SNNumberRecognizer
 	//bool SortANNPredictionResults(const SNANNLinePredictionResults& i, const SNANNLinePredictionResults& j);
 }
 //---------------------------------------------------------------------
+
+typedef std::vector<SNNumberRecognizer::AlphabetTypes> SNNumberFormat;
+//--------------------------------------------------------------------------
+
+struct SNNumberVariant
+{
+	std::string Number;
+	float Weight;
+};
+
+typedef std::vector<SNNumberVariant> SNNumberVariants;
+//--------------------------------------------------------------------------
+
 #endif // SNNumberDefines_h__

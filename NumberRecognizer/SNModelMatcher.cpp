@@ -104,7 +104,7 @@ void SNModelMatcher::DebugModel(const cv::Mat& gray_image, SNPlateModel& out_mod
 }
 //------------------------------------------------------
 
-float SNModelMatcher::MatchModel(const cv::Mat& gray_image, SNFigureGroups& fgs)
+float SNModelMatcher::MatchModel(const cv::Mat& gray_image, SNFigureGroups& fgs, SNPlateModel& best_model)
 {
 	int min_symbols = 6;
 
@@ -187,6 +187,8 @@ float SNModelMatcher::MatchModel(const cv::Mat& gray_image, SNFigureGroups& fgs)
 		BuildModel(r1, r2, pm);
 
 		DebugModel(gray_image, pm);
+
+		best_model = pm;
 
 		for (int k = 0; k < pm.size(); ++k)
 		{

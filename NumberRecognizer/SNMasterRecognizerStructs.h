@@ -15,7 +15,6 @@ public:
 		Top = -1;
 		Bottom = -1;
 		TooBig = false;
-		ModelMatchRatio = 0.0f;
 	}
 
 	SNFigure(pair_int center, pair_int size)
@@ -25,7 +24,6 @@ public:
 		, Bottom(center.second + size.second / 2 + 1)
 		, TooBig(false)
 	{
-		ModelMatchRatio = 0.0f;
 	}
 
 	SNFigure(int left, int right, int top, int bottom)

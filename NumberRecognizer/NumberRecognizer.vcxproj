@@ -88,6 +88,7 @@
     <ClCompile Include="SNMasterSegmentor.cpp" />
     <ClCompile Include="SNModelMatcher.cpp" />
     <ClCompile Include="SNPlateDetector.cpp" />
+    <ClCompile Include="SNPlateRecognizer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Common\SNANNConfigLoader.h" />
@@ -100,6 +101,7 @@
     <ClInclude Include="SNMasterSegmentor.h" />
     <ClInclude Include="SNModelMatcher.h" />
     <ClInclude Include="SNPlateDetector.h" />
+    <ClInclude Include="SNPlateRecognizer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
