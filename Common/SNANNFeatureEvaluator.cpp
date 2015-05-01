@@ -44,7 +44,10 @@ cv::Mat SNANNFeatureEvaluator::Features(const cv::Mat& gray_image)
 {
 	cv::Mat low_data;
 
-	assert(gray_image.size().area());
+	if (!gray_image.size().area())
+	{
+		int r = 0;
+	}
 
 	cv::resize(gray_image, low_data, cv::Size(8, 16));
 

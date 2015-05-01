@@ -2,6 +2,7 @@
 #define SNMasterRecognizerStructs_h__
 //---------------------------------------------------
 #include <vector>
+#include "..\Common\SNANNPredictor.h"
 //---------------------------------------------------
 typedef std::pair<int, int> pair_int;
 //---------------------------------------------------
@@ -247,8 +248,8 @@ private:
 
 struct SNSymbolStats 
 {
-	std::map<char, double> DigitsStats;
-	std::map<char, double> LetterStats;
+	SNNumberRecognizer::ANNPredictionResults DigitsStats;
+	SNNumberRecognizer::ANNPredictionResults LetterStats;
 };
 
 typedef std::vector<SNSymbolStats> SNNumberStats;

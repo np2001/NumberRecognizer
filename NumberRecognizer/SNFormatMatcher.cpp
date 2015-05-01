@@ -19,38 +19,40 @@ SNFormatMatcher::~SNFormatMatcher()
 
 void SNFormatMatcher::MatchNumbers(const SNNumberStats& stats, SNNumberVariants& result)
 {
-	for (int i = 0; i <= (int)stats.size() - (int)Format.size(); ++i)
+	//for (int i = 0; i <= (int)stats.size() - (int)Format.size(); ++i)
+	int i = 0;
 	{
 		SNNumberVariant var;
 		var.Weight = 0.0f;
 
+		if (stats.size() < Format.size())
+			return;
+
 		for (int j = 0; j < Format.size(); ++j)
 		{
-			float weight = -10000;
+			float weight = 0.0f;
 			char best_char = '*';
 
 			if (Format[j] == SNNumberRecognizer::DigitsAlphabet)
 			{
-				for (auto k : stats[i + j].DigitsStats)
+				if (!stats[i + j].DigitsStats.empty())
 				{
-					if (k.second > weight)
-					{
-						best_char = k.first;
-						weight = k.second;
-					}
+					weight = stats[i + j].DigitsStats.front().Weight;
+					if (weight > 0.3)
+						best_char = stats[i + j].DigitsStats.front().Symbol;
 				}
+
 			}
 
 			if (Format[j] == SNNumberRecognizer::LettersAlphabet)
 			{
-				for (auto k : stats[i + j].LetterStats)
+				if (!stats[i + j].LetterStats.empty())
 				{
-					if (k.second > weight)
-					{
-						best_char = k.first;
-						weight = k.second;
-					}
+					weight = stats[i + j].LetterStats.front().Weight;
+					if (weight > 0.3)
+						best_char = stats[i + j].LetterStats.front().Symbol;
 				}
+
 			}
 
 			var.Number += best_char;

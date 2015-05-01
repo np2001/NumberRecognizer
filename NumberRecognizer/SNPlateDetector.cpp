@@ -7,8 +7,8 @@
 
 SNPlateDetector::SNPlateDetector()
 {
-	MinRelativePlateWidth = 0.1;
-	MaxRelativePlateWidth = 0.3;
+	MinRelativePlateWidth = 0.01;
+	MaxRelativePlateWidth = 0.1;
 	AspectRatio = 3.58;
 	ImageWidth = 0;
 	ImageHeight = 0;

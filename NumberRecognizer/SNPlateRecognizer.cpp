@@ -1,4 +1,5 @@
 #include "SNPlateRecognizer.h"
+#include "opencv2\imgproc\imgproc.hpp"
 //----------------------------------------------------------------------------------
 namespace SNNumberRecognizer
 {
@@ -12,55 +13,69 @@ namespace SNNumberRecognizer
 	}
 	//----------------------------------------------------------------------------------
 
-	void SNPlateRecognizer::RecognizePlate(const cv::Mat& image, SNNumberVariants& variants)
+	void SNPlateRecognizer::RecognizePlate(const cv::Mat& image, SNFigureGroups& fgs, SNNumberVariants& variants)
 	{
-		SNFigureGroups fgs;
-		Segmentor.Segment(image, fgs, 100, 255, -1);
+		SNFigureGroup fg;
+		Segmentor.Segment(image, fg, 100, 255, -1);
 
-		//cv::Mat debug_image;
-		//Segmentor.DebugFigureGroups(image, fgs, debug_image, 2);
+		Segmentor.GroupByIntersect(fg, fgs);
 
 		SNPlateModel best_model;
-		ModelMatcher.MatchModel(image, fgs, best_model);
 
-		std::string region = RecognizeRegion(image, best_model);
+		int32_t best_group_to_start;
 
-		SNNumberStats stats;
 		
-		SNNumberRecognizer::ANNPredictionResults results;
-
-		for (auto& fg : fgs)
+		if (ModelMatcher.MatchModel2(image, fgs, best_group_to_start))
 		{
-			stats.push_back(SNSymbolStats());
+			//for (auto fg: fgs)
+			//ModelMatcher.MatchModel(image, fg);
 
-			for (auto& f : fg)
+			std::string region/* = RecognizeRegion(image, best_model)*/;
+
+			SNNumberStats stats;
+
+			SNNumberRecognizer::ANNPredictionResults results;
+
+			for (int i = best_group_to_start; i < fgs.size(); ++i)
 			{
-				cv::Mat symbol = cv::Mat(image, cv::Rect(f.left(), f.top(), f.Width() + 1, f.Height() + 1)).clone();
+				stats.push_back(SNSymbolStats());
 
-				Predictor.Predict(SNNumberRecognizer::DigitsAlphabet, symbol, Eval, results);
+				for (auto& f : fgs[i])
+				{
+					cv::Mat symbol = cv::Mat(image, cv::Rect(f.left(), f.top(), f.Width() + 1, f.Height() + 1)).clone();
 
-				//stats.back().DigitsStats[results.front().Symbol] += results.front().Weight;
-				stats.back().DigitsStats[results.front().Symbol] += f.GetModelMatchRatio();
-				results.clear();
+					if (!symbol.rows)
+					{
+						int r = 0;
+					}
 
-				Predictor.Predict(SNNumberRecognizer::LettersAlphabet, symbol, Eval, results);
-				//stats.back().LetterStats[results.front().Symbol] += results.front().Weight;
-				stats.back().LetterStats[results.front().Symbol] += f.GetModelMatchRatio();
-				results.clear();
+					Predictor.Predict(SNNumberRecognizer::DigitsAlphabet, symbol, Eval, results);
+
+					stats.back().DigitsStats = results;
+					//stats.back().DigitsStats[results.front().Symbol] += f.GetModelMatchRatio();
+					results.clear();
+
+					Predictor.Predict(SNNumberRecognizer::LettersAlphabet, symbol, Eval, results);
+					stats.back().LetterStats = results;
+					//stats.back().LetterStats[results.front().Symbol] += f.GetModelMatchRatio();
+					results.clear();
+				}
 			}
-		}
 
-		FormatMatcher.MatchNumbers(stats, variants);
+			FormatMatcher.MatchNumbers(stats, variants);
 
-		for (auto& r : variants)
-		{
-			r.Number += region;
+			for (auto& r : variants)
+			{
+				r.Number += region;
+			}
 		}
 	}
 	//----------------------------------------------------------------------------------
 
 	bool SNPlateRecognizer::InitRecognizer(const char* config)
 	{
+		// return false;
+		
 		SNANNConfigMap test_config;
 		bool res = ConfigLoader.Load(config, test_config);
 		if (res)
@@ -92,12 +107,19 @@ namespace SNNumberRecognizer
 			{
 				for (int32_t i = 0; i < region_size; ++i)
 				{
-					cv::Mat symbol = cv::Mat(gray_image, best_plate_model[region_index + i] + cv::Point(x, y));
-					ANNPredictionResults results;
-					Predictor.Predict(SNNumberRecognizer::DigitsAlphabet, symbol, Eval, results);
+					cv::Rect symbol_rect = best_plate_model[region_index + i] + cv::Point(x, y);
 
-					stats[i].DigitsStats[results.front().Symbol] += 1.0f;
-					results.clear();
+					if (symbol_rect.y >= 0 && symbol_rect.br().x < gray_image.cols && symbol_rect.x >= 0 && symbol_rect.br().y < gray_image.rows)
+					{
+						cv::Mat symbol = cv::Mat(gray_image, symbol_rect);
+
+						ANNPredictionResults results;
+						Predictor.Predict(SNNumberRecognizer::DigitsAlphabet, symbol, Eval, results);
+
+						stats[i].DigitsStats = results;
+						
+						results.clear();
+					}
 				}
 			}
 		}
@@ -105,21 +127,40 @@ namespace SNNumberRecognizer
 		for (int32_t i = 0; i < region_size; ++i)
 		{
 			float max_weight = 0.0f;
-			char best_char;
-			for (auto j : stats[i].DigitsStats)
-			{
-				if (j.second > max_weight)
-				{
-					max_weight = j.second;
-					best_char = j.first;
-				}
-			}
+			char best_char = '*';
 
+			if (!stats[i].DigitsStats.empty())
+			{
+				best_char = stats[i].DigitsStats.front().Symbol;
+				max_weight = stats[i].DigitsStats.front().Weight;
+			}
+			
 			res += best_char;
 		}
 
 		return res;
 	}
+
+	void SNPlateRecognizer::DebugFigureGroups(const cv::Mat& gray_image, const SNFigureGroups& groups, cv::Mat& out_image, int scale /*= 1*/)
+	{
+		cvtColor(gray_image, out_image, CV_GRAY2RGB);
+		cv:resize(out_image, out_image, out_image.size() * scale);
+
+		for (auto group : groups)
+		{
+			cv::Scalar color = CV_RGB(rand() % 255, rand() % 255, rand() % 255);
+			//// отрисовываем найденные фигуры
+			if (!group.empty())
+			{
+				for (size_t nn = 0; nn < group.size(); ++nn)
+				{
+					cv::rectangle(out_image, cv::Point(group[nn].left() * scale, group[nn].top() * scale), cv::Point(group[nn].right() * scale, group[nn].bottom() * scale), color, 1);
+				}
+			}
+		}
+		//---------------------------------------------------
+	}
+
 	//----------------------------------------------------------------------------------
 }
 //----------------------------------------------------------------------------------

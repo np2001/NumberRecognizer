@@ -16,8 +16,10 @@ namespace SNNumberRecognizer
 	public:
 		SNPlateRecognizer();
 		~SNPlateRecognizer();
-		void RecognizePlate(const cv::Mat& image, SNNumberVariants& variants);
+		void RecognizePlate(const cv::Mat& image, SNFigureGroups& fgs, SNNumberVariants& variants);
 		bool InitRecognizer(const char* config);
+		void DebugFigureGroups(const cv::Mat& gray_image, const SNFigureGroups& groups, cv::Mat& out_image, int scale = 1);
+
 	private:
 		std::string RecognizeRegion(const cv::Mat& gray_image, const SNPlateModel& best_plate_model);
 	private:

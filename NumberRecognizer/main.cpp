@@ -17,6 +17,7 @@
 #include "SNModelMatcher.h"
 #include "SNFormatMatcher.h"
 #include "SNPlateRecognizer.h"
+#include <windows.h>
 
 SNNumberRecognizer::SNPlateRecognizer pr;
 
@@ -47,137 +48,118 @@ int main(int argc, char *argv[])
 
 	srand(QDateTime::currentDateTime().time().msec());
 
-	while (true)
+	/*while (true)
 	{
-		int i = rand() % 1600;
-		char c[1000];
-		sprintf_s(c, sizeof(c), "f:/symbols6/plates/%i.bmp", i);
+	int i = rand() % 1600;
+	char c[1000];
+	sprintf_s(c, sizeof(c), "e:/symbols7/plates/%i.bmp", i);
 
-		cv::Mat image = cv::imread(c, cv::IMREAD_GRAYSCALE);
+	cv::Mat image = cv::imread(c, cv::IMREAD_GRAYSCALE);
 
-		assert(image.size().area());
+	if (image.size().area())
+	{
 
-		cv::resize(image, image, image.size() * 1);
+	cv::resize(image, image, image.size() * 1);
 
-		SNNumberVariants variants;
-		
-		QTime time;
-		time.start();
+	SNNumberVariants variants;
 
-		pr.RecognizePlate(image, variants);
+	QTime time;
+	time.start();
 
-		assert(image.size().area());
+	SNFigureGroups fgs;
+	pr.RecognizePlate(image, fgs, variants);
 
-		cv::resize(image, image, image.size() * 4);
+	cv::Mat debug_image;
+	pr.DebugFigureGroups(image, fgs, debug_image, 2);
 
-		if (!variants.empty())
-		{
-			cv:putText(image, variants.front().Number, cv::Point(5, image.rows - 5), CV_FONT_HERSHEY_PLAIN, 1, cv::Scalar(255, 0, 0));
-		}
+	assert(image.size().area());
 
-		int t = time.elapsed();
+	cv::resize(image, image, image.size() * 4);
 
-		qDebug() << t;
+	if (!variants.empty())
+	{
+	cv:putText(image, variants.front().Number, cv::Point(5, image.rows - 5), CV_FONT_HERSHEY_PLAIN, 1, cv::Scalar(255, 0, 0));
+	}
+
+	int t = time.elapsed();
+
+	qDebug() << t;
+	}
 	}
 
 
-	getch();
+	getch();*/
 
-	LoadCascade(pd, "cascade_2.xml");
-		int32_t total_count = 0;
-	int32_t total_correct_count = 0;
-	int32_t total_incorrect_count = 0;
-	int32_t total_unrecognized_count = 0;
+	LoadCascade(pd, "../cascade_2.xml");
+	
+	cv::VideoCapture capture("e:/MailCloud/video_data_base/autonumbers/russia/Êטלנû.avi");
 
-
-	cv::VideoCapture capture("e:/MailCloud/video_data_base/autonumbers/russia/num.avi");
-
-	// current video frame
 	cv::Mat frame;
 	
 	cv::Size window_size = cv::Size(8, 14);
 
+	int frame_count = 0;
+
 	if (capture.isOpened())
 	{
-		bool first_frame = true;
-
 		while (true)
 		{
 			if (!capture.read(frame))
 				break;
 
-			SNPlateRects rects;
+			Sleep(25);
 
-			//25, 7, 33, 19
-
-			QTime time;
-			time.start();
-
-			pd.Detect(frame, rects);
+			frame_count++;
 			
-			cv::Rect image_rect = cv::Rect(0, 0, frame.cols - 1, frame.rows - 1);
-
-			if (rects.PlateRects.size())
+			//if (frame_count > 1673/* && frame_count < 293*/)
+			//if (frame_count > 390/* && frame_count < 293*/)
 			{
-				for (auto r : rects.PlateRects)
+				SNPlateRects rects;
+
+				QTime time;
+				time.start();
+
+				pd.Detect(frame, rects);
+
+				cv::Rect image_rect = cv::Rect(0, 0, frame.cols - 1, frame.rows - 1);
+
+				if (rects.PlateRects.size())
 				{
-					r &= image_rect;
-					cv::Mat i = cv::Mat(frame, r);
-
-					cv::Mat gray_image;
-					cv::Mat test_image;
-					cv::cvtColor(i, gray_image, CV_RGB2GRAY);
-					cv::resize(i, test_image, cv::Size(i.cols * 10, i.rows * 10));
-
-					int dilation_size = 1;
-					cv::Mat element = getStructuringElement(cv::MORPH_ERODE,
-						cv::Size(2 * dilation_size + 1, 2 * dilation_size + 1),
-						cv::Point(dilation_size, dilation_size));
-					/// Apply the dilation operation
-					//cv::Canny(gray_image, gray_image, 128, 255);
-					//erode(gray_image, gray_image, element);
-
-					for (int i = 0; i < gray_image.rows - window_size.height; ++i)
+					for (auto r : rects.PlateRects)
 					{
-						for (int j = 0; j < gray_image.cols - window_size.width; ++j)
+						r &= image_rect;
+						cv::Mat plate_image = cv::Mat(frame, r);
+
+						cv::Mat gray_image;
+						//cv::Mat test_image;
+						cv::cvtColor(plate_image, gray_image, CV_RGB2GRAY);
+						//cv::resize(plate_image, test_image, cv::Size(plate_image.cols * 10, plate_image.rows * 10));
+
+						QTime time;
+						time.start();
+
+						SNFigureGroups fgs;
+						SNNumberVariants variants;
+						pr.RecognizePlate(gray_image, fgs, variants);
+
+						cv::Mat debug_image;
+						pr.DebugFigureGroups(gray_image, fgs, debug_image, 2);
+
+						cv::resize(plate_image, plate_image, plate_image.size() * 4);
+
+						if (!variants.empty())
 						{
-							cv::Mat symbol_image = cv::Mat(gray_image, cv::Rect(j, i, window_size.width, window_size.height));
-							//cv::Mat features = eval.Features(symbol_image);
-
-							float weight;
-							//int class_id = pred.Predict(SNNumberRecognizer::DigitsAlphabet, symbol_image, eval, weight);
-							//if (class_id != -1/* && class_id == 4*/ && weight > 0.5)
-							//{
-							//	char text[20];
-							//	sprintf_s(text, "%i", class_id);
-							//	cv::putText(test_image, text, cv::Point(j * 10, i * 10), CV_FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 0, 250));
-							//	cv::rectangle(test_image, cv::Rect(j * 10, i * 10, window_size.width * 10, window_size.height * 10), cv::Scalar(255, 0, 0));
-							//}
-
+						cv:putText(plate_image, variants.front().Number, cv::Point(5, plate_image.rows - 5), CV_FONT_HERSHEY_PLAIN, 1, cv::Scalar(255, 0, 0));
 						}
+
+						int r = 0;
 					}
-
-					int r = 0;
-
-					/*hs.LoadImage(gray_image);
-
-					SNNumberRecognizer::SNSymbolRanges sr;
-					
-					hs.DetectSymbolRanges(sr);
-					hs.DebugSymbolRanges(sr, i);
-					int e = 0;*/
 				}
+
+				int r = time.elapsed();
+				qDebug() << r;
 			}
-
-			int r = time.elapsed();
-			qDebug() << r;
-
-
-			if (first_frame)
-			{
-				first_frame = false;
-
-			}
+			
 		}
 	}
 
