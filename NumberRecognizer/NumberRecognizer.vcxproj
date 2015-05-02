@@ -79,29 +79,33 @@
     <ClCompile Include="..\Common\SNANNConfigLoader.cpp" />
     <ClCompile Include="..\Common\SNANNFeatureEvaluator.cpp" />
     <ClCompile Include="..\Common\SNANNPredictor.cpp" />
+    <ClCompile Include="..\Common\SNStringEncryptor.cpp" />
     <ClCompile Include="..\Common\tinyxml.cpp" />
     <ClCompile Include="..\Common\tinyxmlerror.cpp" />
     <ClCompile Include="..\Common\tinyxmlparser.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SNFormatMatcher.cpp" />
-    <ClCompile Include="SNMasterRecognizer.cpp" />
     <ClCompile Include="SNMasterSegmentor.cpp" />
     <ClCompile Include="SNModelMatcher.cpp" />
     <ClCompile Include="SNPlateDetector.cpp" />
     <ClCompile Include="SNPlateRecognizer.cpp" />
+    <ClCompile Include="SNRecognizer.cpp" />
+    <ClCompile Include="SNStatsCombiner.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Common\SNANNConfigLoader.h" />
     <ClInclude Include="..\Common\SNANNFeatureEvaluator.h" />
     <ClInclude Include="..\Common\SNANNPredictor.h" />
+    <ClInclude Include="..\Common\SNStringEncryptor.h" />
     <ClInclude Include="..\Common\tinyxml.h" />
     <ClInclude Include="SNFormatMatcher.h" />
-    <ClInclude Include="SNMasterRecognizer.h" />
     <ClInclude Include="SNMasterRecognizerStructs.h" />
     <ClInclude Include="SNMasterSegmentor.h" />
     <ClInclude Include="SNModelMatcher.h" />
     <ClInclude Include="SNPlateDetector.h" />
     <ClInclude Include="SNPlateRecognizer.h" />
+    <ClInclude Include="SNRecognizer.h" />
+    <ClInclude Include="SNStatsCombiner.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

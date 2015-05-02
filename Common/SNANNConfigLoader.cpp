@@ -33,6 +33,8 @@ namespace SNNumberRecognizer
 	std::string SNANNConfigLoader::FromHex(std::string str)
 	{
 		std::string res;
+		res.reserve(str.size());
+
 		for (int i = 0; i < str.size(); i += 2)
 		{
 			char src[20];

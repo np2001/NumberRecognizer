@@ -7,6 +7,7 @@
 #include "SNMasterSegmentor.h"
 #include "SNModelMatcher.h"
 #include "SNFormatMatcher.h"
+#include "SNStatsCombiner.h"
 //---------------------------------------------------------------------
 
 namespace SNNumberRecognizer
@@ -16,10 +17,10 @@ namespace SNNumberRecognizer
 	public:
 		SNPlateRecognizer();
 		~SNPlateRecognizer();
-		void RecognizePlate(const cv::Mat& image, SNFigureGroups& fgs, SNNumberVariants& variants);
+		void RecognizePlate(uint64_t frame_id, const cv::Rect& plate_rect, const cv::Mat& plate_image, SNFigureGroups& fgs, SNNumberVariants& variants);
 		bool InitRecognizer(const char* config);
 		void DebugFigureGroups(const cv::Mat& gray_image, const SNFigureGroups& groups, cv::Mat& out_image, int scale = 1);
-
+		void CheckResults(const uint64_t& frame_id);
 	private:
 		std::string RecognizeRegion(const cv::Mat& gray_image, const SNPlateModel& best_plate_model);
 	private:
@@ -29,6 +30,7 @@ namespace SNNumberRecognizer
 		SNModelMatcher ModelMatcher;
 		SNANNFeatureEvaluator Eval;
 		SNFormatMatcher FormatMatcher;
+		SNStatsCombiner StatsCombiner;
 	};
 }
 //---------------------------------------------------------------------

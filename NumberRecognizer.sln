@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SymbolsExtractor", "Symbols
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ANNTrainer", "ANNTrainer\ANNTrainer.vcxproj", "{36170CE1-326A-494A-B86D-515969F2FBB0}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SNFileCompiler", "SNFileCompiler\SNFileCompiler.vcxproj", "{8F87CBB7-4B6F-48D3-99E8-27F9F5F008CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -27,6 +29,10 @@ Global
 		{36170CE1-326A-494A-B86D-515969F2FBB0}.Debug|Win32.Build.0 = Debug|Win32
 		{36170CE1-326A-494A-B86D-515969F2FBB0}.Release|Win32.ActiveCfg = Release|Win32
 		{36170CE1-326A-494A-B86D-515969F2FBB0}.Release|Win32.Build.0 = Release|Win32
+		{8F87CBB7-4B6F-48D3-99E8-27F9F5F008CB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8F87CBB7-4B6F-48D3-99E8-27F9F5F008CB}.Debug|Win32.Build.0 = Debug|Win32
+		{8F87CBB7-4B6F-48D3-99E8-27F9F5F008CB}.Release|Win32.ActiveCfg = Release|Win32
+		{8F87CBB7-4B6F-48D3-99E8-27F9F5F008CB}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

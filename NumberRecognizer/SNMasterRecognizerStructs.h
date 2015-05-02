@@ -173,86 +173,30 @@ typedef std::vector<SNFigure> SNFigureGroup;
 typedef std::vector<SNFigureGroup> SNFigureGroups;
 //---------------------------------------------------
 
-struct SNFoundNumber
-{
-	SNFoundNumber()
-	{
-		Weight = -1;
-	}
-
-	std::string Number;		// номер
-	int Weight;			// вес
-	SNFigureGroup  Figures;
-
-	std::pair<std::string, int> to_pair() const
-	{
-		return std::make_pair(Number, Weight);
-	}
-
-	bool operator < (const SNFoundNumber& other) const
-	{
-		const int cnp = count_not_parsed_syms();
-		const int cnp_other = other.count_not_parsed_syms();
-		if (cnp != cnp_other)
-		{
-			return cnp > cnp_other;
-		}
-		else
-		{
-			return Weight < other.Weight;
-		}
-	}
-
-	bool is_valid() const
-	{
-		return Weight != -1 && !Number.empty();
-	}
-
-	int count_not_parsed_syms() const
-	{
-		if (Number.empty())
-			return 100; // вообще ничего нет
-		return count(Number.begin(), Number.end(), '?');
-	}
-};
-//------------------------------------------------------
-
-struct SNFoundSymbol
-{
-	SNFigure fig;
-	size_t pos_in_pis_index;
-	char symbol;
-	double weight;
-};
-//------------------------------------------------------
-
-struct SNNumberData
-{
-	SNNumberData()
-	{
-		CacheOrigin = 0;
-	}
-
-	~SNNumberData()
-	{
-	}
-
-	const cv::Mat* CacheOrigin;
-	std::map<std::pair<cv::Rect, bool>, std::pair<char, double>> CacheRets;
-
-private:
-	SNNumberData(const SNNumberData& other);
-	SNNumberData& operator=(const SNNumberData& other);
-};
-//------------------------------------------------------
-
 struct SNSymbolStats 
 {
 	SNNumberRecognizer::ANNPredictionResults DigitsStats;
 	SNNumberRecognizer::ANNPredictionResults LetterStats;
 };
+//------------------------------------------------------
+struct SNNumberStats : public std::vector<SNSymbolStats>
+{
+	uint64_t FrameID;
+	cv::Rect PlateRect;
+	cv::Mat Plate;
+};
+//------------------------------------------------------
+struct SNNumberStatsGroup : public std::vector<SNNumberStats>
+{
+	uint64_t BestFrameID;
+	uint64_t LastFrameID;
 
-typedef std::vector<SNSymbolStats> SNNumberStats;
+	cv::Rect BestPlateRect;
+	cv::Rect LastRect;
+	cv::Mat Plate;
+};
+//------------------------------------------------------
+typedef std::vector<SNNumberStatsGroup> SNNumberStatsGroups;
 //------------------------------------------------------
 
 #endif // SNMasterRecognizerStructs_h__

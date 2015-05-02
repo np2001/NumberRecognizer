@@ -51,44 +51,8 @@ namespace SNNumberRecognizer
 	//------------------------------------------------------------------------------
 	typedef std::map<AlphabetTypes, SNANNConfig> SNANNConfigMap;
 	//------------------------------------------------------------------------------
-
 	typedef std::list<cv::Mat> SNPlateList;
-
-	//struct SNANNPredictionResult
-	//{
-	//	int32_t ClassID;
-	//	float Weight;
-	//	cv::Point TopLeft;
-	//	cv::Size WinSize;
-	//};
-	////------------------------------------------------------------------------------
-	//typedef std::vector<SNANNPredictionResult> SNANNPredictionResultList;
-	////------------------------------------------------------------------------------
-
-	//struct SNANNLinePredictionResults : public std::map<int32_t, SNANNPredictionResultList>
-	//{
-	//	float WeightSum;
-	//	int32_t LineNum;
-	//};
-	////------------------------------------------------------------------------------
-	//typedef std::vector<SNANNLinePredictionResults> SNANNPredictionResults;
 	//------------------------------------------------------------------------------
-	//bool SortANNPredictionResults(const SNANNLinePredictionResults& i, const SNANNLinePredictionResults& j);
-	//------------------------------------------------------------------------------
-	//typedef std::map<int32_t, SNANNPredictionResult> SNColumnPredictionResults;
-	////------------------------------------------------------------------------------
-	//struct SNPlateVariant : public SNANNPredictionResultList
-	//{
-	//	float WeightSum;
-	//	std::string Number;
-	//};
-	////------------------------------------------------------------------------------
-	//typedef std::vector<SNPlateVariant> SNPlateVariants;
-	////------------------------------------------------------------------------------
-	//typedef std::map<std::string, float> SNPlateVariantsRating;
-	////------------------------------------------------------------------------------
-
-	//bool SortANNPredictionResults(const SNANNLinePredictionResults& i, const SNANNLinePredictionResults& j);
 }
 //---------------------------------------------------------------------
 
@@ -100,8 +64,17 @@ struct SNNumberVariant
 	std::string Number;
 	float Weight;
 };
-
+//--------------------------------------------------------------------------
 typedef std::vector<SNNumberVariant> SNNumberVariants;
+//--------------------------------------------------------------------------
+
+struct SNNumberRecognizerInputFrame
+{
+	char* RGB32Image;
+	uint32_t Width;
+	uint32_t Height;
+	uint64_t FrameID;
+};
 //--------------------------------------------------------------------------
 
 #endif // SNNumberDefines_h__

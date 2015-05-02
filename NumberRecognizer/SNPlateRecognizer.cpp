@@ -13,7 +13,7 @@ namespace SNNumberRecognizer
 	}
 	//----------------------------------------------------------------------------------
 
-	void SNPlateRecognizer::RecognizePlate(const cv::Mat& image, SNFigureGroups& fgs, SNNumberVariants& variants)
+	void SNPlateRecognizer::RecognizePlate(uint64_t frame_id, const cv::Rect& plate_rect, const cv::Mat& image, SNFigureGroups& fgs, SNNumberVariants& variants)
 	{
 		SNFigureGroup fg;
 		Segmentor.Segment(image, fg, 100, 255, -1);
@@ -24,50 +24,43 @@ namespace SNNumberRecognizer
 
 		int32_t best_group_to_start;
 
-		
 		if (ModelMatcher.MatchModel2(image, fgs, best_group_to_start))
 		{
-			//for (auto fg: fgs)
-			//ModelMatcher.MatchModel(image, fg);
-
 			std::string region/* = RecognizeRegion(image, best_model)*/;
 
 			SNNumberStats stats;
+			stats.FrameID = frame_id;
+			stats.PlateRect = plate_rect;
+			stats.Plate = image;
 
 			SNNumberRecognizer::ANNPredictionResults results;
 
 			for (int i = best_group_to_start; i < fgs.size(); ++i)
 			{
 				stats.push_back(SNSymbolStats());
-
+				
 				for (auto& f : fgs[i])
 				{
 					cv::Mat symbol = cv::Mat(image, cv::Rect(f.left(), f.top(), f.Width() + 1, f.Height() + 1)).clone();
 
-					if (!symbol.rows)
-					{
-						int r = 0;
-					}
-
 					Predictor.Predict(SNNumberRecognizer::DigitsAlphabet, symbol, Eval, results);
 
 					stats.back().DigitsStats = results;
-					//stats.back().DigitsStats[results.front().Symbol] += f.GetModelMatchRatio();
 					results.clear();
 
 					Predictor.Predict(SNNumberRecognizer::LettersAlphabet, symbol, Eval, results);
 					stats.back().LetterStats = results;
-					//stats.back().LetterStats[results.front().Symbol] += f.GetModelMatchRatio();
 					results.clear();
 				}
 			}
 
-			FormatMatcher.MatchNumbers(stats, variants);
+			StatsCombiner.CombineStats(stats);
+			/*FormatMatcher.MatchNumbers(stats, variants);
 
 			for (auto& r : variants)
 			{
-				r.Number += region;
-			}
+			r.Number += region;
+			}*/
 		}
 	}
 	//----------------------------------------------------------------------------------
@@ -158,9 +151,13 @@ namespace SNNumberRecognizer
 				}
 			}
 		}
-		//---------------------------------------------------
 	}
+	//---------------------------------------------------
 
+	void SNPlateRecognizer::CheckResults(const uint64_t& frame_id)
+	{
+		StatsCombiner.CheckResults(frame_id);
+	}
 	//----------------------------------------------------------------------------------
 }
 //----------------------------------------------------------------------------------

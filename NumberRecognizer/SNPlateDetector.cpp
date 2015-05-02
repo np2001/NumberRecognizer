@@ -1,6 +1,5 @@
 #include "SNPlateDetector.h"
-#include "opencv2\core\core_c.h"
-#include <opencv2\imgproc\types_c.h>
+#include <opencv2\core\core.hpp>
 #include <opencv2\imgproc\imgproc.hpp>
 #include <opencv2\highgui\highgui.hpp>
 //------------------------------------------------------------------------------------
@@ -49,16 +48,15 @@ void SNPlateDetector::Detect(const cv::Mat& image, SNPlateRects& plates)
 }
 //------------------------------------------------------------------------------------
 
-void SNPlateDetector::Detect(const cv::Mat& image, cv::Size min_size, cv::Size max_size)
-{
-	std::vector<cv::Rect> rects;
-	cv::Mat gray_image;
-	cv::cvtColor(image, gray_image, CV_RGB2GRAY);
-	cv::resize(gray_image, gray_image, cv::Size(268, 60));
-	Classifier.detectMultiScale(gray_image, rects, 1.1, 12, 0, min_size, max_size);
-	int r = 0;
-}
-//------------------------------------------------------------------------------------
+//void SNPlateDetector::Detect(const cv::Mat& image, cv::Size min_size, cv::Size max_size)
+//{
+//	std::vector<cv::Rect> rects;
+//	cv::Mat gray_image;
+//	cv::cvtColor(image, gray_image, CV_RGB2GRAY);
+//	cv::resize(gray_image, gray_image, cv::Size(268, 60));
+//	Classifier.detectMultiScale(gray_image, rects, 1.1, 12, 0, min_size, max_size);
+//}
+////------------------------------------------------------------------------------------
 
 
 void SNPlateDetector::Init(const cv::Mat& image)
