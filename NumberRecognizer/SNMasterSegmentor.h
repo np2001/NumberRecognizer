@@ -19,6 +19,7 @@ private:
 	void AddPixelAsSpy(int row, int col, cv::Mat& mat, SNFigure& fig, int top_border = -1, int bottom_border = -1);
 	void ParseToFigures(cv::Mat& mat, SNFigureGroup& group);
 	void RemoveEqualRects(SNFigureGroup& figs);
+	void RemoveBySize(const cv::Mat& plate_image, SNFigureGroup& figs);
 	void KeepLargestRectOnly(SNFigureGroups& fgs);
 private:
 	int PointsDiplicateFirst[1024 * 1024 * 10];

@@ -6,8 +6,8 @@
 
 SNPlateDetector::SNPlateDetector()
 {
-	MinRelativePlateWidth = 0.01;
-	MaxRelativePlateWidth = 0.1;
+	MinRelativePlateWidth = 0.1;
+	MaxRelativePlateWidth = 0.3;
 	AspectRatio = 3.58;
 	ImageWidth = 0;
 	ImageHeight = 0;
@@ -25,8 +25,7 @@ void SNPlateDetector::LoadCascade(const std::string& cascade)
 
 	cv::FileNode fn = fs["cascade"];
 
-	bool res = Classifier.read(fn);
-	int r = 0;
+	Classifier.read(fn);
 }
 //------------------------------------------------------------------------------------
 
@@ -47,17 +46,6 @@ void SNPlateDetector::Detect(const cv::Mat& image, SNPlateRects& plates)
 	}
 }
 //------------------------------------------------------------------------------------
-
-//void SNPlateDetector::Detect(const cv::Mat& image, cv::Size min_size, cv::Size max_size)
-//{
-//	std::vector<cv::Rect> rects;
-//	cv::Mat gray_image;
-//	cv::cvtColor(image, gray_image, CV_RGB2GRAY);
-//	cv::resize(gray_image, gray_image, cv::Size(268, 60));
-//	Classifier.detectMultiScale(gray_image, rects, 1.1, 12, 0, min_size, max_size);
-//}
-////------------------------------------------------------------------------------------
-
 
 void SNPlateDetector::Init(const cv::Mat& image)
 {

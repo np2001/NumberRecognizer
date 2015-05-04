@@ -1,6 +1,7 @@
 #include "SNMasterSegmentor.h"
 #include <opencv2\imgproc\imgproc.hpp>
 #include <set>
+#include "SNImageDebugger.h"
 //---------------------------------------------------
 
 SNMasterSegmentor::SNMasterSegmentor()
@@ -27,7 +28,8 @@ void SNMasterSegmentor::Segment(const cv::Mat& gray_image, SNFigureGroup& group,
 {
 	cv::Mat norm_gray_image;
 
-	cv::equalizeHist(gray_image, norm_gray_image);
+	//cv::equalizeHist(gray_image, norm_gray_image);
+	norm_gray_image = gray_image;
 	
 	if (gray_step == -1)
 	{
@@ -53,6 +55,17 @@ void SNMasterSegmentor::Segment(const cv::Mat& gray_image, SNFigureGroup& group,
 	});
 
 	RemoveEqualRects(group);
+
+	cv::Mat out_image;
+
+	SNImageDebugger::DebugFigureGroup(gray_image, group, out_image, 4);
+	
+	RemoveBySize(gray_image, group);
+
+	out_image = cv::Mat(0, 0, CV_8UC1);
+	SNImageDebugger::DebugFigureGroup(gray_image, group, out_image, 4);
+
+	int r = 0;
 }
 //---------------------------------------------------
 
@@ -183,7 +196,7 @@ void SNMasterSegmentor::GroupByIntersect(const SNFigureGroup& figs, SNFigureGrou
 		}
 	}
 
-	KeepLargestRectOnly(groups);
+	//KeepLargestRectOnly(groups);
 }
 //------------------------------------------------------
 
@@ -203,6 +216,30 @@ void SNMasterSegmentor::KeepLargestRectOnly(SNFigureGroups& fgs)
 
 		fg.clear();
 		fg.push_back(largest_figure);
+	}
+}
+
+void SNMasterSegmentor::RemoveBySize(const cv::Mat& plate_image, SNFigureGroup& figs)
+{
+	float min_rel_height = 0.25f;
+	float max_rel_height = 0.5f;
+
+	//float min_rel_width = 0.01f;
+	//float max_rel_width = 0.1f;
+
+	float min_ar = 0.9f;
+	float max_ar = 2.0f;
+	
+	for (auto f = figs.begin(); f != figs.end();)
+	{
+		float rel_height = f->Height() * 1.0f / plate_image.rows;
+		float rel_width = f->Width() * 1.0f / plate_image.cols;
+		float ar = f->Height() * 1.0f / f->Width();
+
+		if (rel_height < min_rel_height || rel_height > max_rel_height || /*rel_width < min_rel_width || rel_width > max_rel_width || */ ar < min_ar || ar > max_ar)
+			f = figs.erase(f);
+		else
+			++f;
 	}
 }
 //------------------------------------------------------

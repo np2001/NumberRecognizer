@@ -8,23 +8,6 @@
 
 namespace SNNumberRecognizer
 {
-	struct ANNPredictionResult
-	{
-		char Symbol;
-		float Weight;
-	};
-
-	struct ANNPredictionResults : public std::list<ANNPredictionResult>
-	{
-		void Sort()
-		{
-			sort([](const ANNPredictionResult & a, const ANNPredictionResult & b) -> bool
-			{
-				return a.Weight > b.Weight;
-			});
-		}
-	};
-
 	class SNANNPredictor
 	{
 	public:

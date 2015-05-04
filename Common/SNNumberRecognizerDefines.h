@@ -5,13 +5,33 @@
 #include <stdint.h>
 #include <list>
 #include <map>
+#include "..\NumberRecognizer\SNMasterRecognizerStructs.h"
 //---------------------------------------------------------------------
 
 namespace SNNumberRecognizer
 {
 	//------------------------------------------------------------------------------
+
+	struct ANNPredictionResult
+	{
+		char Symbol;
+		float Weight;
+	};
+
+	struct ANNPredictionResults : public std::list <ANNPredictionResult>
+	{
+		void Sort()
+		{
+			sort([](const ANNPredictionResult & a, const ANNPredictionResult & b) -> bool
+			{
+				return a.Weight > b.Weight;
+			});
+		}
+	};
+
 	enum AlphabetTypes
 	{
+		UnknownAlphabet = -1,
 		DigitsAlphabet = 0,
 		LettersAlphabet = 1
 	};
@@ -23,7 +43,7 @@ namespace SNNumberRecognizer
 		int32_t Count;
 	};
 	//------------------------------------------------------------------------------
-	struct ANNSymbolClassItems : public std::list<ANNClassItem>
+	struct ANNSymbolClassItems : public std::list < ANNClassItem >
 	{
 		char DisplaySymbol;
 	};
@@ -53,28 +73,69 @@ namespace SNNumberRecognizer
 	//------------------------------------------------------------------------------
 	typedef std::list<cv::Mat> SNPlateList;
 	//------------------------------------------------------------------------------
+
+	struct SNNumberVariant
+	{
+		std::string Number;
+		float Weight;
+	};
+	//--------------------------------------------------------------------------
+	typedef std::vector<SNNumberVariant> SNNumberVariants;
+	//--------------------------------------------------------------------------
+
+	struct SNPlateModelSymbol
+	{
+		cv::Rect SymbolRect;
+		AlphabetTypes SymbolType;
+		SNFigureGroup SymbolVariants;
+	};
+	//------------------------------------------------------
+	typedef std::vector<SNPlateModelSymbol> SNPlateModel;
+	typedef std::vector<SNPlateModel> SNPlateModels;
+	//------------------------------------------------------
+
+	struct SNPlateModelCenterVector
+	{
+		cv::Point2f Vector;
+		float VectorLength;
+	};
+	//--------------------------------------------------------------------------
+	typedef std::vector<SNPlateModelCenterVector> SNPlateModelCenterVectors;
+	//--------------------------------------------------------------------------
+
+	struct SNNumberRecognizerInputFrame
+	{
+		char* RGB32Image;
+		uint32_t Width;
+		uint32_t Height;
+		uint64_t FrameID;
+	};
+
+	struct SNSymbolStats
+	{
+		ANNPredictionResults DigitsStats;
+		ANNPredictionResults LetterStats;
+	};
+	//------------------------------------------------------
+	struct SNNumberStats : public std::vector < SNSymbolStats >
+	{
+		uint64_t FrameID;
+		cv::Rect PlateRect;
+		cv::Mat Plate;
+	};
+	//------------------------------------------------------
+	struct SNNumberStatsGroup : public std::vector < SNNumberStats >
+	{
+		uint64_t BestFrameID;
+		uint64_t LastFrameID;
+
+		cv::Rect BestPlateRect;
+		cv::Rect LastRect;
+		cv::Mat Plate;
+	};
+	//------------------------------------------------------
+	typedef std::vector<SNNumberStatsGroup> SNNumberStatsGroups;
+	//------------------------------------------------------
+	//--------------------------------------------------------------------------
 }
-//---------------------------------------------------------------------
-
-typedef std::vector<SNNumberRecognizer::AlphabetTypes> SNNumberFormat;
-//--------------------------------------------------------------------------
-
-struct SNNumberVariant
-{
-	std::string Number;
-	float Weight;
-};
-//--------------------------------------------------------------------------
-typedef std::vector<SNNumberVariant> SNNumberVariants;
-//--------------------------------------------------------------------------
-
-struct SNNumberRecognizerInputFrame
-{
-	char* RGB32Image;
-	uint32_t Width;
-	uint32_t Height;
-	uint64_t FrameID;
-};
-//--------------------------------------------------------------------------
-
 #endif // SNNumberDefines_h__

@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 {
 	QCoreApplication a(argc, argv);
 
-	cv::VideoCapture capture("e:/MailCloud/video_data_base/autonumbers/russia/Êטלנû.avi");
+	cv::VideoCapture capture("e:/MailCloud/video_data_base/autonumbers/russia/day1_1.avi");
 
 	cv::Mat frame;
 	
@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 
 	uint64_t frame_id = 0;
 
-	SNNumberRecognizerInputFrame frame2;
+	SNNumberRecognizer::SNNumberRecognizerInputFrame frame2;
 	frame2.FrameID = 0;
 
 	if (capture.isOpened())
@@ -40,8 +40,11 @@ int main(int argc, char *argv[])
 
 			frame_count++;
 
+			cv::imshow("src", frame);
+
+			cv::waitKey(1);
 			//if (frame_count > 1673/* && frame_count < 293*/)
-			if (frame_count > 100/* && frame_count < 293*/)
+			//if (frame_count > 100/* && frame_count < 293*/)
 			{
 				cv::Mat rgb32_image;
 				cvtColor(frame, rgb32_image, CV_RGB2RGBA);

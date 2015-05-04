@@ -3,6 +3,7 @@
 #include "..\Common\SNStringEncryptor.h"
 #include "..\Common\plate_detector_cascade.h"
 #include "opencv2\imgproc\imgproc.hpp"
+#include "SNImageDebugger.h"
 
 namespace SNNumberRecognizer
 {
@@ -43,13 +44,14 @@ namespace SNNumberRecognizer
 			plate_rect &= image_rect;
 		
 			cv::Mat plate_image = cv::Mat(gray_image, plate_rect);
+			//cv::resize(plate_image, plate_image, cv::Size(268, 60));
 
 			SNFigureGroups fgs;
 			SNNumberVariants variants;
 			PlateRecognizer.RecognizePlate(frame.FrameID, plate_rect, plate_image, fgs, variants);
 
 			cv::Mat debug_image;
-			PlateRecognizer.DebugFigureGroups(plate_image, fgs, debug_image, 2);
+			SNImageDebugger::DebugFigureGroups(plate_image, fgs, debug_image, 2);
 
 			int r = 0;
 		}

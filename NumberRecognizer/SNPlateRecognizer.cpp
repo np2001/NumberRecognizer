@@ -20,11 +20,11 @@ namespace SNNumberRecognizer
 
 		Segmentor.GroupByIntersect(fg, fgs);
 
-		SNPlateModel best_model;
+		SNPlateModels best_models;
 
-		int32_t best_group_to_start;
+		int32_t best_group_to_start = 0;
 
-		if (ModelMatcher.MatchModel2(image, fgs, best_group_to_start))
+		if (ModelMatcher.MatchModel3(image, fgs, best_models))
 		{
 			std::string region/* = RecognizeRegion(image, best_model)*/;
 
@@ -38,23 +38,80 @@ namespace SNNumberRecognizer
 			for (int i = best_group_to_start; i < fgs.size(); ++i)
 			{
 				stats.push_back(SNSymbolStats());
-				
+
 				for (auto& f : fgs[i])
 				{
 					cv::Mat symbol = cv::Mat(image, cv::Rect(f.left(), f.top(), f.Width() + 1, f.Height() + 1)).clone();
 
 					Predictor.Predict(SNNumberRecognizer::DigitsAlphabet, symbol, Eval, results);
+					if (stats.back().DigitsStats.empty())
+						stats.back().DigitsStats = results;
+					else
+						StatsCombiner.CombinePredictionResults(results, stats.back().DigitsStats);
 
-					stats.back().DigitsStats = results;
 					results.clear();
 
 					Predictor.Predict(SNNumberRecognizer::LettersAlphabet, symbol, Eval, results);
-					stats.back().LetterStats = results;
+					
+					if (stats.back().LetterStats.empty())
+						stats.back().LetterStats = results;
+					else
+						StatsCombiner.CombinePredictionResults(results, stats.back().LetterStats);
+					
 					results.clear();
+
+					char best_char = stats.back().LetterStats.front().Symbol;
+					char best_digit = stats.back().DigitsStats.front().Symbol;
+					int r = 0;
 				}
 			}
 
+			/*for (auto m : best_model)
+			{
+				stats.push_back(SNSymbolStats());
+
+				cv::Mat symbol = cv::Mat(image, cv::Rect(m.x, m.y, m.width + 1, m.height + 1)).clone();
+
+				for (int32_t dx = -3; dx <= 3; ++dx)
+				{
+					for (int32_t dy = -3; dy <= 3; ++dy)
+					{
+						for (int32_t dw = -3; dw <= 3; ++dw)
+						{
+							for (int32_t dh = -3; dh <= 3; ++dh)
+							{
+								symbol = cv::Mat(image, cv::Rect(m.x + dx, m.y + dy, m.width + dw, m.height + dh)).clone();
+
+								if (symbol.rows)
+								{
+									Predictor.Predict(SNNumberRecognizer::DigitsAlphabet, symbol, Eval, results);
+
+									if (results.front().Weight > 0.8)
+									{
+										int r = 0;
+									}
+
+									stats.back().DigitsStats = results;
+									results.clear();
+
+									Predictor.Predict(SNNumberRecognizer::LettersAlphabet, symbol, Eval, results);
+
+									if (results.front().Weight > 0.8)
+									{
+										int r = 0;
+									}
+
+									stats.back().LetterStats = results;
+									results.clear();
+								}
+							}
+						}
+					}
+				}
+			}*/
+
 			StatsCombiner.CombineStats(stats);
+
 			/*FormatMatcher.MatchNumbers(stats, variants);
 
 			for (auto& r : variants)
@@ -100,7 +157,7 @@ namespace SNNumberRecognizer
 			{
 				for (int32_t i = 0; i < region_size; ++i)
 				{
-					cv::Rect symbol_rect = best_plate_model[region_index + i] + cv::Point(x, y);
+					cv::Rect symbol_rect = best_plate_model[region_index + i].SymbolRect + cv::Point(x, y);
 
 					if (symbol_rect.y >= 0 && symbol_rect.br().x < gray_image.cols && symbol_rect.x >= 0 && symbol_rect.br().y < gray_image.rows)
 					{
@@ -133,30 +190,11 @@ namespace SNNumberRecognizer
 
 		return res;
 	}
-
-	void SNPlateRecognizer::DebugFigureGroups(const cv::Mat& gray_image, const SNFigureGroups& groups, cv::Mat& out_image, int scale /*= 1*/)
-	{
-		cvtColor(gray_image, out_image, CV_GRAY2RGB);
-		cv:resize(out_image, out_image, out_image.size() * scale);
-
-		for (auto group : groups)
-		{
-			cv::Scalar color = CV_RGB(rand() % 255, rand() % 255, rand() % 255);
-			//// отрисовываем найденные фигуры
-			if (!group.empty())
-			{
-				for (size_t nn = 0; nn < group.size(); ++nn)
-				{
-					cv::rectangle(out_image, cv::Point(group[nn].left() * scale, group[nn].top() * scale), cv::Point(group[nn].right() * scale, group[nn].bottom() * scale), color, 1);
-				}
-			}
-		}
-	}
-	//---------------------------------------------------
+	//----------------------------------------------------------------------------------
 
 	void SNPlateRecognizer::CheckResults(const uint64_t& frame_id)
 	{
-		StatsCombiner.CheckResults(frame_id);
+		StatsCombiner.CheckResults(ModelMatcher.Model, frame_id);
 	}
 	//----------------------------------------------------------------------------------
 }

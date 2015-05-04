@@ -2,7 +2,6 @@
 #define SNMasterRecognizerStructs_h__
 //---------------------------------------------------
 #include <vector>
-#include "..\Common\SNANNPredictor.h"
 //---------------------------------------------------
 typedef std::pair<int, int> pair_int;
 //---------------------------------------------------
@@ -172,31 +171,5 @@ private:
 typedef std::vector<SNFigure> SNFigureGroup;
 typedef std::vector<SNFigureGroup> SNFigureGroups;
 //---------------------------------------------------
-
-struct SNSymbolStats 
-{
-	SNNumberRecognizer::ANNPredictionResults DigitsStats;
-	SNNumberRecognizer::ANNPredictionResults LetterStats;
-};
-//------------------------------------------------------
-struct SNNumberStats : public std::vector<SNSymbolStats>
-{
-	uint64_t FrameID;
-	cv::Rect PlateRect;
-	cv::Mat Plate;
-};
-//------------------------------------------------------
-struct SNNumberStatsGroup : public std::vector<SNNumberStats>
-{
-	uint64_t BestFrameID;
-	uint64_t LastFrameID;
-
-	cv::Rect BestPlateRect;
-	cv::Rect LastRect;
-	cv::Mat Plate;
-};
-//------------------------------------------------------
-typedef std::vector<SNNumberStatsGroup> SNNumberStatsGroups;
-//------------------------------------------------------
 
 #endif // SNMasterRecognizerStructs_h__

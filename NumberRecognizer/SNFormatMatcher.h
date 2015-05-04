@@ -2,19 +2,20 @@
 #define SNFormatMatcher_h__
 #include <vector>
 #include "..\Common\SNNumberRecognizerDefines.h"
-#include "SNMasterRecognizerStructs.h"
-
+#include "SNModelMatcher.h"
 //--------------------------------------------------------------------------
-
-class SNFormatMatcher
+namespace SNNumberRecognizer
 {
-public:
-	SNFormatMatcher();
-	~SNFormatMatcher();
-	void MatchNumbers(const SNNumberStats& stats, SNNumberVariants& result);
-private:
-	SNNumberFormat Format;
-};
+	class SNFormatMatcher
+	{
+	public:
+		SNFormatMatcher();
+		~SNFormatMatcher();
+		void MatchNumbers(const SNPlateModel& format, const SNNumberStats& stats, SNNumberVariants& result);
+	private:
+
+	};
+}
 //--------------------------------------------------------------------------
 
 #endif // SNFormatMatcher_h__

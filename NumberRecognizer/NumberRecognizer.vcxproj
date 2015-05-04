@@ -85,6 +85,7 @@
     <ClCompile Include="..\Common\tinyxmlparser.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SNFormatMatcher.cpp" />
+    <ClCompile Include="SNImageDebugger.cpp" />
     <ClCompile Include="SNMasterSegmentor.cpp" />
     <ClCompile Include="SNModelMatcher.cpp" />
     <ClCompile Include="SNPlateDetector.cpp" />
@@ -99,6 +100,7 @@
     <ClInclude Include="..\Common\SNStringEncryptor.h" />
     <ClInclude Include="..\Common\tinyxml.h" />
     <ClInclude Include="SNFormatMatcher.h" />
+    <ClInclude Include="SNImageDebugger.h" />
     <ClInclude Include="SNMasterRecognizerStructs.h" />
     <ClInclude Include="SNMasterSegmentor.h" />
     <ClInclude Include="SNModelMatcher.h" />

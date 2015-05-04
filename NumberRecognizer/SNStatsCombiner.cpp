@@ -82,16 +82,16 @@ namespace SNNumberRecognizer
 		return res;
 	}
 
-	void SNStatsCombiner::CheckResults(const uint64_t frame_id)
+	void SNStatsCombiner::CheckResults(const SNPlateModel& model, const uint64_t frame_id)
 	{
 		for (auto g = NumberStatsGroups.begin(); g != NumberStatsGroups.end();)
 		{
 			if (frame_id - g->LastFrameID > 5000000)
 			{
-				OutputIntermediateResults(*g);
+				OutputIntermediateResults(model, *g);
 				
 				SNNumberVariants variants;
-				DetectFinalResult(*g, variants);
+				DetectFinalResult(model, *g, variants);
 				g = NumberStatsGroups.erase(g);
 			}
 			else
@@ -101,14 +101,15 @@ namespace SNNumberRecognizer
 		}
 	}
 
-	void SNStatsCombiner::OutputIntermediateResults(const SNNumberStatsGroup& group)
+	void SNStatsCombiner::OutputIntermediateResults(const SNPlateModel& model, const SNNumberStatsGroup& group)
 	{
+		//return;
 		OutputDebugStringA("Intermediate results\r\n");
 
 		for (auto& num : group)
 		{
 			SNNumberVariants variants;
-			FormatMatcher.MatchNumbers(num, variants);
+			FormatMatcher.MatchNumbers(model, num, variants);
 
 			for (auto& v : variants)
 			{
@@ -119,40 +120,60 @@ namespace SNNumberRecognizer
 	}
 	//-----------------------------------------------------------------
 
-	void SNStatsCombiner::DetectFinalResult(const SNNumberStatsGroup& group, SNNumberVariants& variants)
+	void SNStatsCombiner::DetectFinalResult(const SNPlateModel& model, const SNNumberStatsGroup& group, SNNumberVariants& variants)
 	{
 		SNNumberStats final_res;
+
+		for (int i = 0; i < model.size(); ++i)
+			final_res.push_back(SNSymbolStats());
+
 		for (uint32_t i = 0; i < group.size(); ++i)
 		{
-			if (i == 0)
-				final_res = group[0];
-			else
-				CombineStats(group[i], final_res);
+			CombineStats(group[i], final_res);
 		}
 
-		FormatMatcher.MatchNumbers(final_res, variants);
-
-		OutputDebugStringA("Final result\r\n");
-
-		for (auto& v : variants)
+		if (!final_res.empty())
 		{
-			OutputDebugStringA(v.Number.c_str());
-			OutputDebugStringA("\r\n");
+			FormatMatcher.MatchNumbers(model, final_res, variants);
+
+			for (auto& v : variants)
+			{
+				if (v.Weight > 10)
+				{
+					OutputDebugStringA("Final result\r\n");
+
+					char c[100];
+					sprintf_s(c, 100, "%s %2.2f\r\n", v.Number.c_str(), v.Weight);
+					OutputDebugStringA(c);
+				}
+			}
 		}
 	}
 	//-----------------------------------------------------------------
 
 	void SNNumberRecognizer::SNStatsCombiner::CombinePredictionResults(const ANNPredictionResults& src, ANNPredictionResults& dst)
 	{
-		for (auto& d : dst)
+		for (auto& s : src)
 		{
-			for (auto& s : src)
+			bool symbol_found_in_dst = false;
+
+			for (auto& d : dst)
 			{
 				if (s.Symbol == d.Symbol)
 				{
 					if (s.Weight > 0.0)
 						d.Weight += s.Weight;
+					symbol_found_in_dst = true;
+					break;
 				}
+			}
+
+			if (!symbol_found_in_dst)
+			{
+				ANNPredictionResult res;
+				res.Symbol = s.Symbol;
+				res.Weight = s.Weight;
+				dst.push_back(res);
 			}
 		}
 
