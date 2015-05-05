@@ -221,7 +221,7 @@ void SNMasterSegmentor::KeepLargestRectOnly(SNFigureGroups& fgs)
 
 void SNMasterSegmentor::RemoveBySize(const cv::Mat& plate_image, SNFigureGroup& figs)
 {
-	float min_rel_height = 0.25f;
+	float min_rel_height = 0.20f;
 	float max_rel_height = 0.5f;
 
 	//float min_rel_width = 0.01f;

@@ -28,30 +28,29 @@ namespace SNNumberRecognizer
 
 	void SNRecognizer::Process(const SNNumberRecognizerInputFrame& frame)
 	{
+		cv::Rect roi_rect = cv::Rect(frame.ROIX * frame.Width, frame.ROIY * frame.Height, frame.ROIWidth * frame.Width, frame.ROIHeight * frame.Height);
+
 		cv::Mat image = cv::Mat(frame.Height, frame.Width, CV_8UC4, frame.RGB32Image);
 
-		cv::Mat gray_image;
+		cv::Mat roi_image = cv::Mat(image, roi_rect);
+		
+		cv::Mat roi_gray_image;
 
-		cv::cvtColor(image, gray_image, CV_RGBA2GRAY);
+		cv::cvtColor(roi_image, roi_gray_image, CV_RGBA2GRAY);
+
+		cv::Rect roi_gray_image_rect = cv::Rect(0, 0, roi_gray_image.cols, roi_gray_image.rows);
 
 		SNPlateRects rects;
-		PlateDetector.Detect(gray_image, rects);
+		PlateDetector.Detect(roi_gray_image, frame.FrameID, rects);
 
-		cv::Rect image_rect = cv::Rect(0, 0, frame.Width - 1, frame.Height - 1);
-
-		for (auto plate_rect : rects.PlateRects)
+		for (auto plate_rect : rects)
 		{
-			plate_rect &= image_rect;
-		
-			cv::Mat plate_image = cv::Mat(gray_image, plate_rect);
-			//cv::resize(plate_image, plate_image, cv::Size(268, 60));
-
 			SNFigureGroups fgs;
 			SNNumberVariants variants;
-			PlateRecognizer.RecognizePlate(frame.FrameID, plate_rect, plate_image, fgs, variants);
+			PlateRecognizer.RecognizePlate(frame.FrameID, plate_rect.GlobalRect, plate_rect.PlateImage, fgs, variants);
 
 			cv::Mat debug_image;
-			SNImageDebugger::DebugFigureGroups(plate_image, fgs, debug_image, 2);
+			SNImageDebugger::DebugFigureGroups(plate_rect.PlateImage, fgs, debug_image, 2);
 
 			int r = 0;
 		}

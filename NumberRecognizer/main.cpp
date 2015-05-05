@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 {
 	QCoreApplication a(argc, argv);
 
-	cv::VideoCapture capture("e:/MailCloud/video_data_base/autonumbers/russia/day1_1.avi");
+	cv::VideoCapture capture("e:/MailCloud/video_data_base/autonumbers/russia/кимры.avi");
 
 	cv::Mat frame;
 	
@@ -56,6 +56,9 @@ int main(int argc, char *argv[])
 				frame2.Width = rgb32_image.cols;
 				frame2.Height = rgb32_image.rows;
 				frame2.FrameID += 400000ULL;
+				frame2.ROIY = 0.0;
+				frame2.ROIWidth = 1.0;
+				frame2.ROIHeight = 1.0;
 
 				nr.Process(frame2);
 

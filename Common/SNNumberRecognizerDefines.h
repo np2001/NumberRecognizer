@@ -12,6 +12,25 @@ namespace SNNumberRecognizer
 {
 	//------------------------------------------------------------------------------
 
+	struct SNPlateRect
+	{
+		// оординаты пластины на полном изображении
+		cv::Rect GlobalRect;
+		// оординаты пластины на вырезанном изображении
+		cv::Rect LocalRect;
+
+		uint64_t FrameID;
+		cv::Mat PlateImage;
+	};
+	//------------------------------------------------------------------------------------
+
+	struct SNPlateRects : public std::vector<SNPlateRect>
+	{
+		
+	};
+	//------------------------------------------------------------------------------------
+
+
 	struct ANNPredictionResult
 	{
 		char Symbol;
@@ -109,6 +128,18 @@ namespace SNNumberRecognizer
 		uint32_t Width;
 		uint32_t Height;
 		uint64_t FrameID;
+		float ROIX;
+		float ROIY;
+		float ROIWidth;
+		float ROIHeight;
+
+		SNNumberRecognizerInputFrame()
+		{
+			ROIX = 0.0f;
+			ROIY = 0.0f;
+			ROIWidth = 1.0f;
+			ROIHeight = 1.0f;
+		}
 	};
 
 	struct SNSymbolStats

@@ -81,6 +81,7 @@ namespace SNNumberRecognizer
 
 		return res;
 	}
+	//-----------------------------------------------------------------
 
 	void SNStatsCombiner::CheckResults(const SNPlateModel& model, const uint64_t frame_id)
 	{
@@ -100,6 +101,7 @@ namespace SNNumberRecognizer
 			}
 		}
 	}
+	//-----------------------------------------------------------------
 
 	void SNStatsCombiner::OutputIntermediateResults(const SNPlateModel& model, const SNNumberStatsGroup& group)
 	{
