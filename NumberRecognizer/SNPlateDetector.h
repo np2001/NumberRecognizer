@@ -16,7 +16,7 @@ namespace SNNumberRecognizer
 		~SNPlateDetector();
 		void LoadCascade(const std::string& cascade);
 
-		void Detect(const cv::Mat& image, const uint64_t& frame_id, SNPlateRects& objects);
+		void Detect(const cv::Mat& image, const uint64_t& frame_id, SNPlates& objects);
 		//void Detect(const cv::Mat& image, cv::Size min_size, cv::Size max_size);
 	public:
 		float MinRelativePlateWidth;

@@ -30,17 +30,27 @@ namespace SNNumberRecognizer
 	}
 	//------------------------------------------------------------------------------------
 
-	void SNPlateDetector::Detect(const cv::Mat& image, const uint64_t& frame_id, SNPlateRects& objects)
+	void SNPlateDetector::Detect(const cv::Mat& image, const uint64_t& frame_id, SNPlates& objects)
 	{
-		Init(image);
+		cv::Mat mini_image;
+		//cv::resize(image, mini_image, cv::Size(image.cols / 1.5, image.rows / 1.5));
+		mini_image = image;
+
+		Init(mini_image);
 
 		std::vector<cv::Rect> plate_rects;
-		Classifier.detectMultiScale(image, plate_rects, 1.1, 3, 0, MinPlateSize, MaxPlateSize);
+		Classifier.detectMultiScale(mini_image, plate_rects, 1.1, 3, 0, MinPlateSize, MaxPlateSize);
 
 		for (auto& pr : plate_rects)
 		{
-			SNPlateRect plate_rect;
+			SNPlate plate_rect;
 			plate_rect.FrameID = frame_id;
+
+			/*pr.x = pr.x * 2;
+			pr.y = pr.y * 2;
+			pr.width = pr.width * 2;
+			pr.height = pr.height * 2;*/
+
 			plate_rect.GlobalRect = pr;
 
 			cv::Point2f plate_center = cv::Point2f(plate_rect.GlobalRect.tl().x + plate_rect.GlobalRect.width / 2.0f, plate_rect.GlobalRect.tl().y + plate_rect.GlobalRect.height / 2.0f);
@@ -52,7 +62,7 @@ namespace SNNumberRecognizer
 			plate_rect.GlobalRect.y = (plate_center.y - plate_rect.GlobalRect.height / 2.0f) + 0.5;
 
 			plate_rect.GlobalRect &= cv::Rect(0, 0, image.cols - 1, image.rows - 1);
-			plate_rect.PlateImage = cv::Mat(image, plate_rect.GlobalRect).clone();
+			plate_rect.PlateImage = cv::Mat(mini_image, plate_rect.GlobalRect).clone();
 			plate_rect.LocalRect = cv::Rect(pr.x - plate_rect.GlobalRect.x, pr.y - plate_rect.GlobalRect.y, pr.width, pr.height);
 			plate_rect.LocalRect &= cv::Rect(0, 0, plate_rect.PlateImage.cols - 1, plate_rect.PlateImage.rows - 1);
 

@@ -17,7 +17,7 @@ namespace SNNumberRecognizer
 		void BuildModel(const cv::Rect& r1, const cv::Rect& r2, SNPlateModel& out_model);
 		void DebugModel(const cv::Mat& gray_image, SNPlateModel& out_model, float mean_compare_ratio, int scale = 1);
 		bool MatchModel2(const cv::Mat& gray_image, SNFigureGroups& fgs, SNPlateModel& out_model, int32_t& best_group_to_start);
-		bool MatchModel3(const cv::Mat& gray_image, SNFigureGroups& fgs, SNPlateModels& out_models);
+		bool MatchModel3(SNPlate& plate, SNPlateModels& out_models);
 	public:
 		SNPlateModel Model;
 

@@ -13,35 +13,32 @@ namespace SNNumberRecognizer
 	}
 	//----------------------------------------------------------------------------------
 
-	void SNPlateRecognizer::RecognizePlate(uint64_t frame_id, const cv::Rect& plate_rect, const cv::Mat& image, SNFigureGroups& fgs, SNNumberVariants& variants)
+	void SNPlateRecognizer::RecognizePlate(SNPlate& plate, SNNumberVariants& variants)
 	{
-		SNFigureGroup fg;
-		Segmentor.Segment(image, fg, 100, 255, -1);
-
-		Segmentor.GroupByIntersect(fg, fgs);
+		Segmentor.Segment(plate, 100, 255, -1);
 
 		SNPlateModels best_models;
 
 		int32_t best_group_to_start = 0;
 
-		if (ModelMatcher.MatchModel3(image, fgs, best_models))
+		if (ModelMatcher.MatchModel3(plate, best_models))
 		{
 			std::string region/* = RecognizeRegion(image, best_model)*/;
 
 			SNNumberStats stats;
-			stats.FrameID = frame_id;
-			stats.PlateRect = plate_rect;
-			stats.Plate = image;
+			stats.FrameID = plate.FrameID;
+			stats.PlateRect = plate.GlobalRect;
+			stats.Plate = plate.PlateImage;
 
 			SNNumberRecognizer::ANNPredictionResults results;
 
-			for (int i = best_group_to_start; i < fgs.size(); ++i)
+			for (int i = best_group_to_start; i < plate.FigureGroups.size(); ++i)
 			{
 				stats.push_back(SNSymbolStats());
 
-				for (auto& f : fgs[i])
+				for (auto& f : plate.FigureGroups[i])
 				{
-					cv::Mat symbol = cv::Mat(image, cv::Rect(f.left(), f.top(), f.Width() + 1, f.Height() + 1)).clone();
+					cv::Mat symbol = cv::Mat(plate.PlateImage, cv::Rect(f.left(), f.top(), f.Width() + 1, f.Height() + 1)).clone();
 
 					Predictor.Predict(SNNumberRecognizer::DigitsAlphabet, symbol, Eval, results);
 					if (stats.back().DigitsStats.empty())

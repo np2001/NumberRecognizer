@@ -4,7 +4,7 @@
 #include "..\Common\SNNumberRecognizerDefines.h"
 #include "..\Common\SNANNConfigLoader.h"
 #include "..\Common\SNANNPredictor.h"
-#include "SNMasterSegmentor.h"
+#include "SNSegmentor.h"
 #include "SNModelMatcher.h"
 #include "SNFormatMatcher.h"
 #include "SNStatsCombiner.h"
@@ -17,7 +17,7 @@ namespace SNNumberRecognizer
 	public:
 		SNPlateRecognizer();
 		~SNPlateRecognizer();
-		void RecognizePlate(uint64_t frame_id, const cv::Rect& plate_rect, const cv::Mat& plate_image, SNFigureGroups& fgs, SNNumberVariants& variants);
+		void RecognizePlate(SNPlate& plate, SNNumberVariants& variants);
 		bool InitRecognizer(const char* config);
 		void CheckResults(const uint64_t& frame_id);
 	private:
@@ -25,7 +25,7 @@ namespace SNNumberRecognizer
 	private:
 		SNANNConfigLoader ConfigLoader;
 		SNANNPredictor Predictor;
-		SNMasterSegmentor Segmentor;
+		SNSegmentor Segmentor;
 		SNModelMatcher ModelMatcher;
 		SNANNFeatureEvaluator Eval;
 		SNFormatMatcher FormatMatcher;

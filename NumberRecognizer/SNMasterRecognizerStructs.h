@@ -2,6 +2,7 @@
 #define SNMasterRecognizerStructs_h__
 //---------------------------------------------------
 #include <vector>
+#include <list>
 //---------------------------------------------------
 typedef std::pair<int, int> pair_int;
 //---------------------------------------------------

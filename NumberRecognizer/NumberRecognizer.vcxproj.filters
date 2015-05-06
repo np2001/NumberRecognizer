@@ -45,9 +45,6 @@
     <ClCompile Include="..\Common\SNANNFeatureEvaluator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SNMasterSegmentor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SNModelMatcher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -69,6 +66,9 @@
     <ClCompile Include="SNImageDebugger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SNSegmentor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SNPlateDetector.h">
@@ -85,9 +85,6 @@
     </ClInclude>
     <ClInclude Include="..\Common\SNANNFeatureEvaluator.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SNMasterSegmentor.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SNMasterRecognizerStructs.h">
       <Filter>Source Files</Filter>
@@ -111,6 +108,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SNImageDebugger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SNSegmentor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

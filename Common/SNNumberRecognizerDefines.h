@@ -12,7 +12,7 @@ namespace SNNumberRecognizer
 {
 	//------------------------------------------------------------------------------
 
-	struct SNPlateRect
+	struct SNPlate
 	{
 		// оординаты пластины на полном изображении
 		cv::Rect GlobalRect;
@@ -21,10 +21,12 @@ namespace SNNumberRecognizer
 
 		uint64_t FrameID;
 		cv::Mat PlateImage;
+
+		SNFigureGroups FigureGroups;
 	};
 	//------------------------------------------------------------------------------------
 
-	struct SNPlateRects : public std::vector<SNPlateRect>
+	struct SNPlates : public std::vector<SNPlate>
 	{
 		
 	};

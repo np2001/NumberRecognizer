@@ -3,7 +3,6 @@
 #include <opencv2\highgui\highgui.hpp>
 #include "opencv2\imgproc\imgproc.hpp"
 #include <QDebug>
-#include "..\Common\SNLocalContraster.h"
 //#include "SNExactRectDetector.h"
 //------------------------------------------------------------
 SNSymbolExtractor::SNSymbolExtractor()

@@ -27,9 +27,6 @@
     <ClCompile Include="..\Common\SNTestNumbersLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Common\SNNumberRecognizerDefines.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SNSymbolExtractor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

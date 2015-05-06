@@ -202,13 +202,13 @@ namespace SNNumberRecognizer
 		return true;
 	}
 
-	bool SNModelMatcher::MatchModel3(const cv::Mat& gray_image, SNFigureGroups& fgs, SNPlateModels& out_models)
+	bool SNModelMatcher::MatchModel3(SNPlate& plate, SNPlateModels& out_models)
 	{
-		for (auto& fg : fgs)
+		for (auto& fg : plate.FigureGroups)
 		{
 			for (auto& f : fg)
 			{
-				float rel_height = f.Height() * 1.0f / gray_image.rows;
+				float rel_height = f.Height() * 1.0f / plate.PlateImage.rows;
 				int r = 0;
 			}
 		}

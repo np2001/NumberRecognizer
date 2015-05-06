@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NumberRecognizer", "NumberRecognizer\NumberRecognizer.vcxproj", "{B12702AD-ABFB-343A-A199-8E24837244A3}"
 EndProject
@@ -14,23 +14,32 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
+		ImageDebug|Win32 = ImageDebug|Win32
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{B12702AD-ABFB-343A-A199-8E24837244A3}.Debug|Win32.ActiveCfg = Debug|Win32
 		{B12702AD-ABFB-343A-A199-8E24837244A3}.Debug|Win32.Build.0 = Debug|Win32
+		{B12702AD-ABFB-343A-A199-8E24837244A3}.ImageDebug|Win32.ActiveCfg = ImageDebug|Win32
+		{B12702AD-ABFB-343A-A199-8E24837244A3}.ImageDebug|Win32.Build.0 = ImageDebug|Win32
 		{B12702AD-ABFB-343A-A199-8E24837244A3}.Release|Win32.ActiveCfg = Release|Win32
 		{B12702AD-ABFB-343A-A199-8E24837244A3}.Release|Win32.Build.0 = Release|Win32
 		{7A7E2054-879D-482D-9F2D-6E3DAF9AD72F}.Debug|Win32.ActiveCfg = Debug|Win32
 		{7A7E2054-879D-482D-9F2D-6E3DAF9AD72F}.Debug|Win32.Build.0 = Debug|Win32
+		{7A7E2054-879D-482D-9F2D-6E3DAF9AD72F}.ImageDebug|Win32.ActiveCfg = ImageDebug|Win32
+		{7A7E2054-879D-482D-9F2D-6E3DAF9AD72F}.ImageDebug|Win32.Build.0 = ImageDebug|Win32
 		{7A7E2054-879D-482D-9F2D-6E3DAF9AD72F}.Release|Win32.ActiveCfg = Release|Win32
 		{7A7E2054-879D-482D-9F2D-6E3DAF9AD72F}.Release|Win32.Build.0 = Release|Win32
 		{36170CE1-326A-494A-B86D-515969F2FBB0}.Debug|Win32.ActiveCfg = Debug|Win32
 		{36170CE1-326A-494A-B86D-515969F2FBB0}.Debug|Win32.Build.0 = Debug|Win32
+		{36170CE1-326A-494A-B86D-515969F2FBB0}.ImageDebug|Win32.ActiveCfg = ImageDebug|Win32
+		{36170CE1-326A-494A-B86D-515969F2FBB0}.ImageDebug|Win32.Build.0 = ImageDebug|Win32
 		{36170CE1-326A-494A-B86D-515969F2FBB0}.Release|Win32.ActiveCfg = Release|Win32
 		{36170CE1-326A-494A-B86D-515969F2FBB0}.Release|Win32.Build.0 = Release|Win32
 		{8F87CBB7-4B6F-48D3-99E8-27F9F5F008CB}.Debug|Win32.ActiveCfg = Debug|Win32
 		{8F87CBB7-4B6F-48D3-99E8-27F9F5F008CB}.Debug|Win32.Build.0 = Debug|Win32
+		{8F87CBB7-4B6F-48D3-99E8-27F9F5F008CB}.ImageDebug|Win32.ActiveCfg = ImageDebug|Win32
+		{8F87CBB7-4B6F-48D3-99E8-27F9F5F008CB}.ImageDebug|Win32.Build.0 = ImageDebug|Win32
 		{8F87CBB7-4B6F-48D3-99E8-27F9F5F008CB}.Release|Win32.ActiveCfg = Release|Win32
 		{8F87CBB7-4B6F-48D3-99E8-27F9F5F008CB}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
@@ -38,6 +47,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		Qt5Version = 4.8.5
+		Qt5Version = 4.8.5_x86
 	EndGlobalSection
 EndGlobal
