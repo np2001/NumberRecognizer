@@ -6,6 +6,7 @@
 #include <windows.h>
 #include <stdint.h>
 #include "..\Common\SNNumberRecognizerDefines.h"
+#include "opencv2\video\background_segm.hpp"
 //------------------------------------------------------------------------------------
 namespace SNNumberRecognizer
 {
@@ -31,6 +32,8 @@ namespace SNNumberRecognizer
 		int ImageHeight;
 		cv::Size MinPlateSize;
 		cv::Size MaxPlateSize;
+		cv::BackgroundSubtractorMOG mog;
+
 	};
 }
 //------------------------------------------------------------------------------------

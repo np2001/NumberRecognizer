@@ -11,7 +11,35 @@
 namespace SNNumberRecognizer
 {
 	//------------------------------------------------------------------------------
+	struct ANNPredictionResult
+	{
+		char Symbol;
+		float Weight;
+	};
 
+	struct ANNPredictionResults : public std::list < ANNPredictionResult >
+	{
+		void Sort()
+		{
+			sort([](const ANNPredictionResult & a, const ANNPredictionResult & b) -> bool
+			{
+				return a.Weight > b.Weight;
+			});
+		}
+	};
+	//------------------------------------------------------------------------------
+	
+	struct SNSymbolStats
+	{
+		ANNPredictionResults DigitsStats;
+		ANNPredictionResults LetterStats;
+	};
+	//------------------------------------------------------
+	struct SNNumberStats : public std::vector < SNSymbolStats >
+	{
+	};
+	//------------------------------------------------------
+	
 	struct SNPlate
 	{
 		// оординаты пластины на полном изображении
@@ -23,32 +51,28 @@ namespace SNNumberRecognizer
 		cv::Mat PlateImage;
 
 		SNFigureGroups FigureGroups;
+		SNNumberStats Stats;
 	};
 	//------------------------------------------------------------------------------------
 
-	struct SNPlates : public std::vector<SNPlate>
+	struct SNNumberStatsGroup : public std::vector < SNPlate >
+	{
+		uint64_t BestFrameID;
+		uint64_t LastFrameID;
+
+		cv::Rect BestPlateRect;
+		cv::Rect LastRect;
+		cv::Mat Plate;
+	};
+	//------------------------------------------------------
+	typedef std::vector<SNNumberStatsGroup> SNNumberStatsGroups;
+	//------------------------------------------------------
+
+	struct SNPlates : public std::list<SNPlate>
 	{
 		
 	};
 	//------------------------------------------------------------------------------------
-
-
-	struct ANNPredictionResult
-	{
-		char Symbol;
-		float Weight;
-	};
-
-	struct ANNPredictionResults : public std::list <ANNPredictionResult>
-	{
-		void Sort()
-		{
-			sort([](const ANNPredictionResult & a, const ANNPredictionResult & b) -> bool
-			{
-				return a.Weight > b.Weight;
-			});
-		}
-	};
 
 	enum AlphabetTypes
 	{
@@ -92,7 +116,7 @@ namespace SNNumberRecognizer
 	//------------------------------------------------------------------------------
 	typedef std::map<AlphabetTypes, SNANNConfig> SNANNConfigMap;
 	//------------------------------------------------------------------------------
-	typedef std::list<cv::Mat> SNPlateList;
+	//typedef std::list<cv::Mat> SNPlateList;
 	//------------------------------------------------------------------------------
 
 	struct SNNumberVariant
@@ -144,31 +168,7 @@ namespace SNNumberRecognizer
 		}
 	};
 
-	struct SNSymbolStats
-	{
-		ANNPredictionResults DigitsStats;
-		ANNPredictionResults LetterStats;
-	};
-	//------------------------------------------------------
-	struct SNNumberStats : public std::vector < SNSymbolStats >
-	{
-		uint64_t FrameID;
-		cv::Rect PlateRect;
-		cv::Mat Plate;
-	};
-	//------------------------------------------------------
-	struct SNNumberStatsGroup : public std::vector < SNNumberStats >
-	{
-		uint64_t BestFrameID;
-		uint64_t LastFrameID;
-
-		cv::Rect BestPlateRect;
-		cv::Rect LastRect;
-		cv::Mat Plate;
-	};
-	//------------------------------------------------------
-	typedef std::vector<SNNumberStatsGroup> SNNumberStatsGroups;
-	//------------------------------------------------------
+	
 	//--------------------------------------------------------------------------
 }
 #endif // SNNumberDefines_h__

@@ -25,96 +25,40 @@ namespace SNNumberRecognizer
 		{
 			std::string region/* = RecognizeRegion(image, best_model)*/;
 
-			SNNumberStats stats;
-			stats.FrameID = plate.FrameID;
-			stats.PlateRect = plate.GlobalRect;
-			stats.Plate = plate.PlateImage;
-
 			SNNumberRecognizer::ANNPredictionResults results;
 
 			for (int i = best_group_to_start; i < plate.FigureGroups.size(); ++i)
 			{
-				stats.push_back(SNSymbolStats());
+				plate.Stats.push_back(SNSymbolStats());
 
 				for (auto& f : plate.FigureGroups[i])
 				{
 					cv::Mat symbol = cv::Mat(plate.PlateImage, cv::Rect(f.left(), f.top(), f.Width() + 1, f.Height() + 1)).clone();
 
 					Predictor.Predict(SNNumberRecognizer::DigitsAlphabet, symbol, Eval, results);
-					if (stats.back().DigitsStats.empty())
-						stats.back().DigitsStats = results;
+					if (plate.Stats.back().DigitsStats.empty())
+						plate.Stats.back().DigitsStats = results;
 					else
-						StatsCombiner.CombinePredictionResults(results, stats.back().DigitsStats);
+						StatsCombiner.CombinePredictionResults(results, plate.Stats.back().DigitsStats);
 
 					results.clear();
 
 					Predictor.Predict(SNNumberRecognizer::LettersAlphabet, symbol, Eval, results);
 					
-					if (stats.back().LetterStats.empty())
-						stats.back().LetterStats = results;
+					if (plate.Stats.back().LetterStats.empty())
+						plate.Stats.back().LetterStats = results;
 					else
-						StatsCombiner.CombinePredictionResults(results, stats.back().LetterStats);
+						StatsCombiner.CombinePredictionResults(results, plate.Stats.back().LetterStats);
 					
 					results.clear();
 
-					char best_char = stats.back().LetterStats.front().Symbol;
-					char best_digit = stats.back().DigitsStats.front().Symbol;
+					char best_char = plate.Stats.back().LetterStats.front().Symbol;
+					char best_digit = plate.Stats.back().DigitsStats.front().Symbol;
 					int r = 0;
 				}
 			}
 
-			/*for (auto m : best_model)
-			{
-				stats.push_back(SNSymbolStats());
-
-				cv::Mat symbol = cv::Mat(image, cv::Rect(m.x, m.y, m.width + 1, m.height + 1)).clone();
-
-				for (int32_t dx = -3; dx <= 3; ++dx)
-				{
-					for (int32_t dy = -3; dy <= 3; ++dy)
-					{
-						for (int32_t dw = -3; dw <= 3; ++dw)
-						{
-							for (int32_t dh = -3; dh <= 3; ++dh)
-							{
-								symbol = cv::Mat(image, cv::Rect(m.x + dx, m.y + dy, m.width + dw, m.height + dh)).clone();
-
-								if (symbol.rows)
-								{
-									Predictor.Predict(SNNumberRecognizer::DigitsAlphabet, symbol, Eval, results);
-
-									if (results.front().Weight > 0.8)
-									{
-										int r = 0;
-									}
-
-									stats.back().DigitsStats = results;
-									results.clear();
-
-									Predictor.Predict(SNNumberRecognizer::LettersAlphabet, symbol, Eval, results);
-
-									if (results.front().Weight > 0.8)
-									{
-										int r = 0;
-									}
-
-									stats.back().LetterStats = results;
-									results.clear();
-								}
-							}
-						}
-					}
-				}
-			}*/
-
-			StatsCombiner.CombineStats(stats);
-
-			/*FormatMatcher.MatchNumbers(stats, variants);
-
-			for (auto& r : variants)
-			{
-			r.Number += region;
-			}*/
+			StatsCombiner.CombineStats(plate);
 		}
 	}
 	//----------------------------------------------------------------------------------

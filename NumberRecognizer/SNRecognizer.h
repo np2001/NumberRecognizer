@@ -21,9 +21,12 @@ namespace SNNumberRecognizer
 		//¬озвращаем true, если кадр нужно придержать в очереди
 		bool Process(const SNNumberRecognizerInputFrame& frame);
 	private:
+		void RecognizePlates();
+	private:
 		SNPlateRecognizer PlateRecognizer;
 		SNPlateDetector PlateDetector;
 		SNImageRetainMap ImageRetainMap;
+		SNPlates NotRecognizedPlates;
 	};
 };
 //---------------------------------------------------------------------------------- -

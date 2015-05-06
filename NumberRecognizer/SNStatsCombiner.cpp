@@ -13,18 +13,18 @@ namespace SNNumberRecognizer
 	}
 	//-----------------------------------------------------------------
 
-	void SNStatsCombiner::CombineStats(const SNNumberStats& stats)
+	void SNStatsCombiner::CombineStats(const SNPlate& plate)
 	{
 		bool matched_group_found = false;
 		for (auto& nggs : NumberStatsGroups)
 		{
-			if (IsGroupMatched(nggs, stats))
+			if (IsGroupMatched(nggs, plate))
 			{
-				nggs.push_back(stats);
+				nggs.push_back(plate);
 				matched_group_found = true;
-				nggs.LastFrameID = stats.FrameID;
-				nggs.LastRect = stats.PlateRect;
-				nggs.Plate = stats.Plate;
+				nggs.LastFrameID = plate.FrameID;
+				nggs.LastRect = plate.GlobalRect;
+				nggs.Plate = plate.PlateImage;
 				break;
 			}
 		}
@@ -32,13 +32,13 @@ namespace SNNumberRecognizer
 		if (!matched_group_found)
 		{
 			SNNumberStatsGroup new_group;
-			new_group.BestFrameID = stats.FrameID;
-			new_group.LastFrameID = stats.FrameID;
-			new_group.BestPlateRect = stats.PlateRect;
-			new_group.LastRect = stats.PlateRect;
-			new_group.Plate = stats.Plate;
+			new_group.BestFrameID = plate.FrameID;
+			new_group.LastFrameID = plate.FrameID;
+			new_group.BestPlateRect = plate.GlobalRect;
+			new_group.LastRect = plate.GlobalRect;
+			new_group.Plate = plate.PlateImage;
 
-			new_group.push_back(stats);
+			new_group.push_back(plate);
 			NumberStatsGroups.push_back(new_group);
 		}
 	}
@@ -54,16 +54,13 @@ namespace SNNumberRecognizer
 				CombinePredictionResults(src[i].LetterStats, dst[i].LetterStats);
 			}
 		}
-		
-		/*SNNumberVariants variants;
-		FormatMatcher.MatchNumbers(dst, variants);*/
 	}
 	//-----------------------------------------------------------------
 
-	bool SNStatsCombiner::IsGroupMatched(const SNNumberStatsGroup& group, const SNNumberStats& src)
+	bool SNStatsCombiner::IsGroupMatched(const SNNumberStatsGroup& group, const SNPlate& plate)
 	{
 		bool res = false;
-		float dx = abs(group.LastRect.x - src.PlateRect.x);
+		float dx = abs(group.LastRect.x - plate.GlobalRect.x);
 		if (dx < 120)
 		{
 			res = true;
@@ -71,8 +68,8 @@ namespace SNNumberRecognizer
 
 		if (group.size() > 1)
 		{
-			int sign_y1 = (group.LastRect.y - src.PlateRect.y) ? 1 : -1;
-			int sign_y2 = (group.front().PlateRect.y - group.back().PlateRect.y) ? 1 : -1;
+			int sign_y1 = (group.LastRect.y - plate.GlobalRect.y) ? 1 : -1;
+			int sign_y2 = (group.front().GlobalRect.y - group.back().GlobalRect.y) ? 1 : -1;
 			if (sign_y1 != sign_y2)
 			{
 				res = false;
@@ -111,7 +108,7 @@ namespace SNNumberRecognizer
 		for (auto& num : group)
 		{
 			SNNumberVariants variants;
-			FormatMatcher.MatchNumbers(model, num, variants);
+			FormatMatcher.MatchNumbers(model, num.Stats, variants);
 
 			for (auto& v : variants)
 			{
@@ -124,19 +121,19 @@ namespace SNNumberRecognizer
 
 	void SNStatsCombiner::DetectFinalResult(const SNPlateModel& model, const SNNumberStatsGroup& group, SNNumberVariants& variants)
 	{
-		SNNumberStats final_res;
+		SNPlate final_res;
 
 		for (int i = 0; i < model.size(); ++i)
-			final_res.push_back(SNSymbolStats());
+			final_res.Stats.push_back(SNSymbolStats());
 
 		for (uint32_t i = 0; i < group.size(); ++i)
 		{
-			CombineStats(group[i], final_res);
+			CombineStats(group[i].Stats, final_res.Stats);
 		}
 
-		if (!final_res.empty())
+		if (!final_res.Stats.empty())
 		{
-			FormatMatcher.MatchNumbers(model, final_res, variants);
+			FormatMatcher.MatchNumbers(model, final_res.Stats, variants);
 
 			for (auto& v : variants)
 			{

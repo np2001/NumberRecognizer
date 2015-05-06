@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 {
 	QCoreApplication a(argc, argv);
 
-	cv::VideoCapture capture("f:/MailCloud/video_data_base/autonumbers/russia/кимры.avi");
+	cv::VideoCapture capture("e:/MailCloud/video_data_base/autonumbers/russia/Кимры.avi");
 
 	cv::Mat frame;
 	

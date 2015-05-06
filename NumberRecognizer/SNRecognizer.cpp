@@ -40,26 +40,34 @@ namespace SNNumberRecognizer
 
 		cv::Rect roi_gray_image_rect = cv::Rect(0, 0, roi_gray_image.cols, roi_gray_image.rows);
 
-		SNPlates rects;
-		PlateDetector.Detect(roi_gray_image, frame.FrameID, rects);
+		SNPlates plates;
+		PlateDetector.Detect(roi_gray_image, frame.FrameID, plates);
 
-		bool retain_image = false;
+		bool retain_image = plates.size() > 0;
 
-		for (auto plate_rect : rects)
+		for (auto& plate : plates)
 		{
-			SNFigureGroups fgs;
-			SNNumberVariants variants;
-			PlateRecognizer.RecognizePlate(plate_rect, variants);
-
-			retain_image = true;
+			NotRecognizedPlates.push_back(plate);
 		}
 
 		if (retain_image)
-			ImageRetainMap[frame.FrameID] += rects.size();
+			ImageRetainMap[frame.FrameID] += plates.size();
 
+		RecognizePlates();
 		PlateRecognizer.CheckResults(frame.FrameID);
 
 		return retain_image;
+	}
+	//--------------------------------------------------------------
+
+	void SNRecognizer::RecognizePlates()
+	{
+		while (!NotRecognizedPlates.empty())
+		{
+			SNNumberVariants variants;
+			PlateRecognizer.RecognizePlate(NotRecognizedPlates.front(), variants);
+			NotRecognizedPlates.pop_front();
+		}
 	}
 	//--------------------------------------------------------------
 };

@@ -2,6 +2,7 @@
 #include <opencv2\core\core.hpp>
 #include <opencv2\imgproc\imgproc.hpp>
 #include <opencv2\highgui\highgui.hpp>
+#include "opencv2\video\background_segm.hpp"
 //------------------------------------------------------------------------------------
 namespace SNNumberRecognizer
 {
@@ -35,11 +36,18 @@ namespace SNNumberRecognizer
 		cv::Mat mini_image;
 		mini_image = image;
 
-		cv::Mat ccc;
+		/*cv::Mat ccc;
 		cv::resize(image, ccc, cv::Size(image.cols / 8, image.rows / 8));
 
 		cv::Mat canny_image;
 		cv:Canny(ccc, canny_image, 128, 255);
+		mog(canny_image, canny_image, 0.01);
+
+		int erosion_size = 0;
+		cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT,
+		cv::Size(2 * erosion_size + 1, 2 * erosion_size + 1),
+		cv::Point(erosion_size, erosion_size));
+		cv::dilate(canny_image, canny_image, element);*/
 
 		Init(mini_image);
 

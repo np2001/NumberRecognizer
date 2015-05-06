@@ -11,7 +11,7 @@ namespace SNNumberRecognizer
 	public:
 		SNStatsCombiner();
 		~SNStatsCombiner();
-		void CombineStats(const SNNumberStats& stats);
+		void CombineStats(const SNPlate& plate);
 		void CheckResults(const SNPlateModel& model, const uint64_t frame_id);
 		void CombinePredictionResults(const ANNPredictionResults& src, ANNPredictionResults& dst);
 
@@ -20,7 +20,7 @@ namespace SNNumberRecognizer
 		SNFormatMatcher FormatMatcher;
 	private:
 		void CombineStats(const SNNumberStats& src, SNNumberStats& dst);
-		bool IsGroupMatched(const SNNumberStatsGroup& group, const SNNumberStats& src);
+		bool IsGroupMatched(const SNNumberStatsGroup& group, const SNPlate& src);
 		void OutputIntermediateResults(const SNPlateModel& model, const SNNumberStatsGroup& group);
 		void DetectFinalResult(const SNPlateModel& model, const SNNumberStatsGroup& group, SNNumberVariants& variants);
 	};
