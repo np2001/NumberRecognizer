@@ -33,8 +33,13 @@ namespace SNNumberRecognizer
 	void SNPlateDetector::Detect(const cv::Mat& image, const uint64_t& frame_id, SNPlates& objects)
 	{
 		cv::Mat mini_image;
-		//cv::resize(image, mini_image, cv::Size(image.cols / 1.5, image.rows / 1.5));
 		mini_image = image;
+
+		cv::Mat ccc;
+		cv::resize(image, ccc, cv::Size(image.cols / 8, image.rows / 8));
+
+		cv::Mat canny_image;
+		cv:Canny(ccc, canny_image, 128, 255);
 
 		Init(mini_image);
 
