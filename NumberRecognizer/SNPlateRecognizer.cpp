@@ -30,7 +30,7 @@ namespace SNNumberRecognizer
 
 			SNNumberRecognizer::ANNPredictionResults results;
 
-			for (int i = best_group_to_start; i < plate.FigureGroups.size(); ++i)
+			for (size_t i = best_group_to_start; i < plate.FigureGroups.size(); ++i)
 			{
 				plate.Stats.push_back(SNSymbolStats());
 

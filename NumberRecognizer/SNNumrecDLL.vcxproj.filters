@@ -78,11 +78,11 @@
     <ClInclude Include="..\Common\tinyxml.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SNNumRecExports.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SNNumrecDLL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

@@ -6,7 +6,7 @@
 #include "SNPlateDetector.h"
 #include <mutex>
 #include "SNRecognizerProcessor.h"
-#include "SNNumRecInterface.h"
+#include "SNNumRecExports.h"
 //-----------------------------------------------------------------------------------
 
 namespace SNNumberRecognizer
@@ -22,10 +22,10 @@ namespace SNNumberRecognizer
 		~SNRecognizer();
 
 		//¬озвращаем true, если кадр нужно придержать в очереди
-		bool Process(const SNNumberRecognizerInputFrame& frame);
+		bool Process(SNNumberRecognizerInputFrame& frame);
 		bool GetPlateToRecognize(SNRecognizerProcessorQuery& query);
 	private:
-		void ReleaseFrames();
+		void ReleaseFrames(SNNumberRecognizerInputFrame& frame);
 	private:
 		SNPlateDetector PlateDetector;
 		SNRecognizerProcessor* RecProcessor;

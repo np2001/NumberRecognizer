@@ -60,7 +60,7 @@ cv::Mat SNANNFeatureEvaluator::Features(const cv::Mat& gray_image)
 	{
 		for (int y = 0; y < low_data.rows; y++)
 		{
-			unsigned char center_value = (float)low_data.at<unsigned char>(y, x);
+			unsigned char center_value = low_data.at<unsigned char>(y, x);
 
 			uint8_t value = 0;
 
@@ -78,7 +78,7 @@ cv::Mat SNANNFeatureEvaluator::Features(const cv::Mat& gray_image)
 			LBPBit(low_data, x, y + 1, center_value, 4, value);
 			LBPBit(low_data, x + 1, y + 1, center_value, 8, value);
 
-			out.at<float>(y * low_data.cols + x) = value + 0.5;
+			out.at<float>(y * low_data.cols + x) = value + 0.5f;
 
 		}
 	}
@@ -91,7 +91,7 @@ void SNANNFeatureEvaluator::LBPBit(const cv::Mat& low_data, int32_t x, int32_t y
 {
 	if (x >= 0 && x < low_data.cols && y >= 0 && y < low_data.rows)
 	{
-		unsigned char v = (float)low_data.at<unsigned char>(y, x);
+		unsigned char v = low_data.at<unsigned char>(y, x);
 		if (v > center_value)
 		{
 			value |= bitmask;

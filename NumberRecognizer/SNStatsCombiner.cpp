@@ -58,7 +58,7 @@ namespace SNNumberRecognizer
 
 	void SNStatsCombiner::CombineStats(const SNNumberStats& src, SNNumberStats& dst)
 	{
-		for (int i = 0; i < src.size(); ++i)
+		for (size_t i = 0; i < src.size(); ++i)
 		{
 			if (i < dst.size())
 			{
@@ -72,7 +72,7 @@ namespace SNNumberRecognizer
 	bool SNStatsCombiner::IsGroupMatched(const SNNumberStatsGroup& group, const SNPlate& plate)
 	{
 		bool res = false;
-		float dx = abs(group.LastRect.x - plate.GlobalRect.x);
+		int32_t dx = abs(group.LastRect.x - plate.GlobalRect.x);
 		if (dx < 120)
 		{
 			res = true;
@@ -147,7 +147,7 @@ namespace SNNumberRecognizer
 	{
 		SNPlate final_res;
 
-		for (int i = 0; i < model.size(); ++i)
+		for (size_t i = 0; i < model.size(); ++i)
 			final_res.Stats.push_back(SNSymbolStats());
 
 		for (uint32_t i = 0; i < group.size(); ++i)
@@ -158,18 +158,6 @@ namespace SNNumberRecognizer
 		if (!final_res.Stats.empty())
 		{
 			FormatMatcher.MatchNumbers(model, final_res.Stats, variants);
-
-			/*for (auto& v : variants)
-			{
-				if (v.Weight > 10)
-				{
-					OutputDebugStringA("Final result\r\n");
-
-					char c[100];
-					sprintf_s(c, 100, "%s %2.2f\r\n", v.Number.c_str(), v.Weight);
-					OutputDebugStringA(c);
-				}
-			}*/
 		}
 	}
 	//-----------------------------------------------------------------

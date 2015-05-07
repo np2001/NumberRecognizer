@@ -84,7 +84,11 @@ namespace SNNumberRecognizer
 			cv::Point2f center = c1 + scaled_cv;
 
 			SNPlateModelSymbol s;
-			cv::Rect r(center.x - Model[i].SymbolRect.width * scale_ratio / 2, center.y - Model[i].SymbolRect.height * scale_ratio / 2, Model[i].SymbolRect.width * scale_ratio, Model[i].SymbolRect.height * scale_ratio);
+			cv::Rect r(
+				(int32_t)(center.x - Model[i].SymbolRect.width * scale_ratio / 2), 
+				(int32_t)(center.y - Model[i].SymbolRect.height * scale_ratio / 2), 
+				(int32_t)(Model[i].SymbolRect.width * scale_ratio), 
+				(int32_t)(Model[i].SymbolRect.height * scale_ratio));
 			s.SymbolRect = r;
 			s.SymbolType = UnknownAlphabet;
 			out_model.push_back(s);
@@ -118,14 +122,14 @@ namespace SNNumberRecognizer
 
 	cv::Point2f SNModelMatcher::AffineTransform(const cv::Point2f& p, const cv::Mat& trans_mat)
 	{
-		cv::Mat x = cv::Mat(3, 1, CV_64FC1);
-		x.at<double>(0) = p.x;
-		x.at<double>(1) = p.y;
-		x.at<double>(2) = 1;
+		cv::Mat x = cv::Mat(3, 1, CV_32FC1);
+		x.at<float>(0) = p.x;
+		x.at<float>(1) = p.y;
+		x.at<float>(2) = 1;
 
 		cv::Mat lt = trans_mat * x;
 
-		return cv::Point2f(lt.at<double>(0), lt.at<double>(1));
+		return cv::Point2f(lt.at<float>(0), lt.at<float>(1));
 	}
 	//------------------------------------------------------
 
@@ -148,7 +152,7 @@ namespace SNNumberRecognizer
 
 			for (int j = 0; j < (int)Model.size() - 2; ++j)
 			{
-				dst.push_back(cv::Point2f(fgs[i + j].front().center().first, fgs[i + j].front().center().second));
+				dst.push_back(cv::Point2f((float)fgs[i + j].front().center().first, (float)fgs[i + j].front().center().second));
 			}
 
 			cv::Mat trans_mat = cv::estimateRigidTransform(src, dst, false);
@@ -171,7 +175,7 @@ namespace SNNumberRecognizer
 					{
 						cv::Rect detected_rect = cv::Rect(fgs[i + k].front().left(), fgs[i + k].front().top(), fgs[i + k].front().Width(), fgs[i + k].front().Height());
 
-						float compare_ratio = (model_rect & detected_rect).area() * 1.0 / (model_rect | detected_rect).area();
+						float compare_ratio = (model_rect & detected_rect).area() * 1.0f / (model_rect | detected_rect).area();
 						compare_ratio_sum += compare_ratio;
 						compare_ratio_count++;
 					}

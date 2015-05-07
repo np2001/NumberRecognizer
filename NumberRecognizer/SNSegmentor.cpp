@@ -35,8 +35,8 @@ namespace SNNumberRecognizer
 		if (gray_step == -1)
 		{
 			cv::Scalar mean = cv::sum(norm_gray_image) / norm_gray_image.cols / norm_gray_image.rows;
-			min_gray_level = mean[0] * 0.5;
-			max_gray_level = mean[0] * 1.6;
+			min_gray_level = (int32_t)(mean[0] * 0.5);
+			max_gray_level = (int32_t)(mean[0] * 1.6);
 			gray_step = (max_gray_level - min_gray_level) / 20;
 		}
 

@@ -14,13 +14,18 @@ void* __stdcall SNNumrecCreate()
 void __stdcall SNNumrecDelete(void* instance)
 {
 	SNNumberRecognizer::SNRecognizer* inst = (SNNumberRecognizer::SNRecognizer*)instance;
-	delete inst;
+	if (inst)
+		delete inst;
 };
 //---------------------------------------------------------------------------
 
-bool(__stdcall SNNumrecProcess)  (void* instance, char* buffer, int out_width, int out_height)
+bool (__stdcall SNNumrecProcess)  (void* instance, SNNumberRecognizerInputFrame* frame)
 {
-	return false;
+	SNNumberRecognizer::SNRecognizer* inst = (SNNumberRecognizer::SNRecognizer*)instance;
+	if (inst)
+		return inst->Process(*frame);
+	else
+		return false;
 };
 //---------------------------------------------------------------------------
 
@@ -44,11 +49,11 @@ namespace SNNumberRecognizer
 	}
 	//--------------------------------------------------------------
 
-	bool SNRecognizer::Process(const SNNumberRecognizerInputFrame& frame)
+	bool SNRecognizer::Process(SNNumberRecognizerInputFrame& frame)
 	{
 		LastFrameID = frame.FrameID;
 
-		cv::Rect roi_rect = cv::Rect(frame.ROIX * frame.Width, frame.ROIY * frame.Height, frame.ROIWidth * frame.Width, frame.ROIHeight * frame.Height);
+		cv::Rect roi_rect = cv::Rect((int32_t)(frame.ROIX * frame.Width), (int32_t)(frame.ROIY * frame.Height), (int32_t)(frame.ROIWidth * frame.Width), (int32_t)(frame.ROIHeight * frame.Height));
 
 		cv::Mat image = cv::Mat(frame.Height, frame.Width, CV_8UC4, frame.RGB32Image);
 
@@ -81,36 +86,58 @@ namespace SNNumberRecognizer
 			OutputDebugStringA(c);
 		}
 		
-		ReleaseFrames();
+		ReleaseFrames(frame);
 
-		for (auto fr : FinalResults)
+		int32_t max_results_count = frame.ResultsCount;
+		frame.ResultsCount = 0;
+
+		while (!FinalResults.empty())
 		{
-			if (fr.Weight > 10)
+			if (FinalResults.front().Weight > 10)
 			{
+				SNFinalResult res = FinalResults.front();
+				frame.Results[frame.ResultsCount].BestFrameID = res.BestFrameID;
+				if (res.Number.size() < sizeof(frame.Results[0].Number))
+					memcpy(&frame.Results[frame.ResultsCount], res.Number.c_str(), res.Number.size());
+				else
+					memcpy(&frame.Results[frame.ResultsCount], res.Number.c_str(), sizeof(frame.Results[0].Number));
+
+				frame.ResultsCount++;
+
 				OutputDebugStringA("Final result\r\n");
 
 				char c[100];
-				sprintf_s(c, 100, "%s %2.2f\r\n", fr.Number.c_str(), fr.Weight);
+				sprintf_s(c, 100, "%s %2.2f\r\n", FinalResults.front().Number.c_str(), FinalResults.front().Weight);
 				OutputDebugStringA(c);
-			}
-		}
 
-		FinalResults.clear();
+				if (frame.ResultsCount == max_results_count)
+					break;
+			}
+
+			FinalResults.pop_front();
+		}
 
 		return retain_image;
 	}
 	//--------------------------------------------------------------
 
-	void SNRecognizer::ReleaseFrames()
-{
-		for (auto& f : FramesToRelease)
+	void SNRecognizer::ReleaseFrames(SNNumberRecognizerInputFrame& frame)
+	{
+		int32_t frames_to_release_max_count = frame.FramesToReleaseCount;
+		frame.FramesToReleaseCount = 0;
+
+		while (!FramesToRelease.empty())
 		{
-			auto i = ImageRetainMap.find(f);
+			auto i = ImageRetainMap.find(FramesToRelease.front());
 			if (i != ImageRetainMap.end())
 			{
 				i->second--;
 				if (i->second == 0)
 				{
+					frame.FramesToRelease[frame.FramesToReleaseCount++] = i->first;
+					if (frame.FramesToReleaseCount == frames_to_release_max_count)
+						break;
+					
 					char c[100];
 					sprintf_s(c, 100, "Image released. Left: %i\r\n", ImageRetainMap.size() - 1);
 					OutputDebugStringA(c);
@@ -121,9 +148,9 @@ namespace SNNumberRecognizer
 			{
 				OutputDebugStringA("No frame to release\r\n");
 			}
-		}
 
-		FramesToRelease.clear();
+			FramesToRelease.pop_front();
+		}
 	}
 	//--------------------------------------------------------------
 

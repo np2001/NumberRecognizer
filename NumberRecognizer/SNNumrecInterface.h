@@ -2,56 +2,53 @@
 #define SNNumrecInterface_h__
 //--------------------------------------------------------------------------
 #include <stdint.h>
-//#include <windows.h>
+#include <windows.h>
 #include "SNNumRecExports.h"
-//--------------------------------------------------------------------------
-#pragma pack(push, 1)
-//--------------------------------------------------------------------------
 
-struct SNNumberRecognizerInputFrame
+class SNNumrecInterface
 {
-	char* RGB32Image;
-	uint32_t Width;
-	uint32_t Height;
-	uint64_t FrameID;
-	float ROIX;
-	float ROIY;
-	float ROIWidth;
-	float ROIHeight;
-
-	SNNumberRecognizerInputFrame()
+public:
+	SNNumrecInterface(char* library_name)
 	{
-		ROIX = 0.0f;
-		ROIY = 0.0f;
-		ROIWidth = 1.0f;
-		ROIHeight = 1.0f;
-	}
-};
-//--------------------------------------------------------------------------
-#pragma pack(pop)
+		Library = LoadLibraryA(library_name);
+		
+		CreateProc = nullptr;
+		DeleteProc = nullptr;
 
-//class SNNumrecInterface
-//{
-//public:
-//	SNNumrecInterface(char* library_name)
-//	{
-//		Library = LoadLibraryA(library_name);
-//		if (Library != INVALID_HANDLE_VALUE)
-//		{
-//			//CreateSNAffineVadll = (SNNumrecCreate*)GetProcAddress(VALibrary, "SNAffineVadllCreate");
-//			//DeleteSNAffineVadll = (SNAffineVadllDelete*)GetProcAddress(VALibrary, "SNAffineVadllDelete");
-//			//SNAffineVadllRGB32Image = (SNAffineTransformationRGB32Image*)GetProcAddress(VALibrary, "SNAffineTransformationRGB32Image");
-//		}
-//	}
-//
-//	~SNNumrecInterface()
-//	{
-//
-//	}
-//private:
-//	HMODULE Library;
-//	SNNumrecCreate* CreateProc;
-//};
+		RecognizerInstance = nullptr;
+
+		if (Library != INVALID_HANDLE_VALUE)
+		{
+			CreateProc = (SNNumrecCreate*)GetProcAddress(Library, "SNNumrecCreate");
+			DeleteProc = (SNNumrecDelete*)GetProcAddress(Library, "SNNumrecDelete");
+			ProcessProc = (SNNumrecProcess*)GetProcAddress(Library, "SNNumrecProcess");
+			if (CreateProc)
+				RecognizerInstance = CreateProc();
+	
+		}
+	}
+
+	bool Process(SNNumberRecognizerInputFrame* frame)
+	{
+		if (RecognizerInstance)
+			return ProcessProc(RecognizerInstance, frame);
+		else
+			return false;
+	}
+
+	~SNNumrecInterface()
+	{
+		if (RecognizerInstance)
+			DeleteProc(RecognizerInstance);
+	}
+
+private:
+	HMODULE Library;
+	void* RecognizerInstance;
+	SNNumrecCreate* CreateProc;
+	SNNumrecDelete* DeleteProc;
+	SNNumrecProcess* ProcessProc;
+};
 //--------------------------------------------------------------------------
 
 

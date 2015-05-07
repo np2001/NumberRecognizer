@@ -123,7 +123,7 @@ namespace SNNumberRecognizer
 	//------------------------------------------------------------------------------
 	typedef std::map<AlphabetTypes, SNANNConfig> SNANNConfigMap;
 	//------------------------------------------------------------------------------
-	//typedef std::list<cv::Mat> SNPlateList;
+	typedef std::list<cv::Mat> SNPlateList;
 	//------------------------------------------------------------------------------
 
 	struct SNNumberVariant

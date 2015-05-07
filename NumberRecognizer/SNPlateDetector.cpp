@@ -8,9 +8,9 @@ namespace SNNumberRecognizer
 {
 	SNPlateDetector::SNPlateDetector()
 	{
-		MinRelativePlateWidth = 0.05;
-		MaxRelativePlateWidth = 0.1;
-		AspectRatio = 4.64;
+		MinRelativePlateWidth = 0.05f;
+		MaxRelativePlateWidth = 0.1f;
+		AspectRatio = 4.64f;
 		ImageWidth = 0;
 		ImageHeight = 0;
 	}
@@ -68,11 +68,11 @@ namespace SNNumberRecognizer
 
 			cv::Point2f plate_center = cv::Point2f(plate_rect.GlobalRect.tl().x + plate_rect.GlobalRect.width / 2.0f, plate_rect.GlobalRect.tl().y + plate_rect.GlobalRect.height / 2.0f);
 			
-			plate_rect.GlobalRect.width *= 1.5f;
-			plate_rect.GlobalRect.height *= 1.5f;
+			plate_rect.GlobalRect.width = (int32_t)(plate_rect.GlobalRect.width * 1.5f);
+			plate_rect.GlobalRect.height = (int32_t)(plate_rect.GlobalRect.height * 1.5f);
 
-			plate_rect.GlobalRect.x = (plate_center.x - plate_rect.GlobalRect.width / 2.0f) + 0.5;
-			plate_rect.GlobalRect.y = (plate_center.y - plate_rect.GlobalRect.height / 2.0f) + 0.5;
+			plate_rect.GlobalRect.x = (int32_t)((plate_center.x - plate_rect.GlobalRect.width / 2.0f) + 0.5);
+			plate_rect.GlobalRect.y = (int32_t)((plate_center.y - plate_rect.GlobalRect.height / 2.0f) + 0.5);
 
 			plate_rect.GlobalRect &= cv::Rect(0, 0, image.cols - 1, image.rows - 1);
 			plate_rect.PlateImage = cv::Mat(mini_image, plate_rect.GlobalRect).clone();
@@ -90,8 +90,8 @@ namespace SNNumberRecognizer
 		{
 			ImageWidth = image.cols;
 			ImageHeight = image.rows;
-			MinPlateSize = cv::Size(MinRelativePlateWidth * ImageWidth, MinRelativePlateWidth / AspectRatio * ImageWidth);
-			MaxPlateSize = cv::Size(MaxRelativePlateWidth * ImageWidth, MaxRelativePlateWidth / AspectRatio * ImageWidth);
+			MinPlateSize = cv::Size((int32_t)(MinRelativePlateWidth * ImageWidth), (int32_t)(MinRelativePlateWidth / AspectRatio * ImageWidth));
+			MaxPlateSize = cv::Size((int32_t)(MaxRelativePlateWidth * ImageWidth), (int32_t)(MaxRelativePlateWidth / AspectRatio * ImageWidth));
 		}
 	}
 }
