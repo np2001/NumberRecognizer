@@ -13,7 +13,7 @@ namespace SNNumberRecognizer
 	}
 	//-----------------------------------------------------------------
 
-	void SNStatsCombiner::CombineStats(const SNPlate& plate)
+	void SNStatsCombiner::CombineStats(const SNPlate& plate, SNFramesToRelease& frames_to_release)
 	{
 		bool matched_group_found = false;
 		for (auto& nggs : NumberStatsGroups)
@@ -25,6 +25,17 @@ namespace SNNumberRecognizer
 				nggs.LastFrameID = plate.FrameID;
 				nggs.LastRect = plate.GlobalRect;
 				nggs.Plate = plate.PlateImage;
+
+				if (plate.Stats.TotalWeight > nggs.BestWeight)
+				{
+					nggs.BestWeight = plate.Stats.TotalWeight;
+					frames_to_release.push_back(nggs.BestFrameID);
+					nggs.BestFrameID = plate.FrameID;
+				}
+				else
+				{
+					frames_to_release.push_back(plate.FrameID);
+				}
 				break;
 			}
 		}
@@ -33,11 +44,12 @@ namespace SNNumberRecognizer
 		{
 			SNNumberStatsGroup new_group;
 			new_group.BestFrameID = plate.FrameID;
+			new_group.BestWeight = plate.Stats.TotalWeight;
 			new_group.LastFrameID = plate.FrameID;
 			new_group.BestPlateRect = plate.GlobalRect;
 			new_group.LastRect = plate.GlobalRect;
 			new_group.Plate = plate.PlateImage;
-
+			
 			new_group.push_back(plate);
 			NumberStatsGroups.push_back(new_group);
 		}
@@ -80,7 +92,7 @@ namespace SNNumberRecognizer
 	}
 	//-----------------------------------------------------------------
 
-	void SNStatsCombiner::CheckResults(const SNPlateModel& model, const uint64_t frame_id)
+	void SNStatsCombiner::CheckResults(const SNPlateModel& model, const uint64_t frame_id, SNFramesToRelease& frames_to_release, SNFinalResults& results)
 	{
 		for (auto g = NumberStatsGroups.begin(); g != NumberStatsGroups.end();)
 		{
@@ -90,6 +102,19 @@ namespace SNNumberRecognizer
 				
 				SNNumberVariants variants;
 				DetectFinalResult(model, *g, variants);
+				
+				for (auto& v : variants)
+				{
+					SNFinalResult res;
+					res.BestFrameID = g->BestFrameID;
+					res.BestPlateRect = g->BestPlateRect;
+					res.BestPlate = g->Plate;
+					res.Number = v.Number;
+					res.Weight = v.Weight;
+					results.push_back(res);
+				}
+
+				frames_to_release.push_back(g->BestFrameID);
 				g = NumberStatsGroups.erase(g);
 			}
 			else
@@ -102,7 +127,6 @@ namespace SNNumberRecognizer
 
 	void SNStatsCombiner::OutputIntermediateResults(const SNPlateModel& model, const SNNumberStatsGroup& group)
 	{
-		//return;
 		OutputDebugStringA("Intermediate results\r\n");
 
 		for (auto& num : group)
@@ -135,7 +159,7 @@ namespace SNNumberRecognizer
 		{
 			FormatMatcher.MatchNumbers(model, final_res.Stats, variants);
 
-			for (auto& v : variants)
+			/*for (auto& v : variants)
 			{
 				if (v.Weight > 10)
 				{
@@ -145,37 +169,44 @@ namespace SNNumberRecognizer
 					sprintf_s(c, 100, "%s %2.2f\r\n", v.Number.c_str(), v.Weight);
 					OutputDebugStringA(c);
 				}
-			}
+			}*/
 		}
 	}
 	//-----------------------------------------------------------------
 
 	void SNNumberRecognizer::SNStatsCombiner::CombinePredictionResults(const ANNPredictionResults& src, ANNPredictionResults& dst)
 	{
-		for (auto& s : src)
+		if (dst.empty())
 		{
-			bool symbol_found_in_dst = false;
-
-			for (auto& d : dst)
+			dst = src;
+		}
+		else
+		{
+			for (auto& s : src)
 			{
-				if (s.Symbol == d.Symbol)
+				bool symbol_found_in_dst = false;
+
+				for (auto& d : dst)
 				{
-					if (s.Weight > 0.0)
-						d.Weight += s.Weight;
-					symbol_found_in_dst = true;
-					break;
+					if (s.Symbol == d.Symbol)
+					{
+						if (s.Weight > 0.0)
+							d.Weight += s.Weight;
+						symbol_found_in_dst = true;
+						break;
+					}
+				}
+
+				if (!symbol_found_in_dst)
+				{
+					ANNPredictionResult res;
+					res.Symbol = s.Symbol;
+					res.Weight = s.Weight;
+					dst.push_back(res);
 				}
 			}
-
-			if (!symbol_found_in_dst)
-			{
-				ANNPredictionResult res;
-				res.Symbol = s.Symbol;
-				res.Weight = s.Weight;
-				dst.push_back(res);
-			}
 		}
-
+		
 		dst.Sort();
 	}
 }

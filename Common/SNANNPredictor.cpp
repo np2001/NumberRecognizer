@@ -1,6 +1,6 @@
 #include "SNANNPredictor.h"
 #include "opencv2\core\core_c.h"
-#include <QDebug>
+//#include <QDebug>
 //#include "SNANNLearningData.h"
 //-------------------------------------------------------------------------------
 namespace SNNumberRecognizer

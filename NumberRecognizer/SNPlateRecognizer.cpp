@@ -1,10 +1,13 @@
 #include "SNPlateRecognizer.h"
 #include "opencv2\imgproc\imgproc.hpp"
+#include "SNRecognizerProcessor.h"
+#include <windows.h>
 //----------------------------------------------------------------------------------
 namespace SNNumberRecognizer
 {
 	SNPlateRecognizer::SNPlateRecognizer()
 	{
+		
 	}
 	//----------------------------------------------------------------------------------
 
@@ -13,7 +16,7 @@ namespace SNNumberRecognizer
 	}
 	//----------------------------------------------------------------------------------
 
-	void SNPlateRecognizer::RecognizePlate(SNPlate& plate, SNNumberVariants& variants)
+	void SNPlateRecognizer::RecognizePlate(SNPlate& plate, SNNumberVariants& variants, SNFramesToRelease& frames_to_release)
 	{
 		Segmentor.Segment(plate, 100, 255, -1);
 
@@ -36,19 +39,13 @@ namespace SNNumberRecognizer
 					cv::Mat symbol = cv::Mat(plate.PlateImage, cv::Rect(f.left(), f.top(), f.Width() + 1, f.Height() + 1)).clone();
 
 					Predictor.Predict(SNNumberRecognizer::DigitsAlphabet, symbol, Eval, results);
-					if (plate.Stats.back().DigitsStats.empty())
-						plate.Stats.back().DigitsStats = results;
-					else
-						StatsCombiner.CombinePredictionResults(results, plate.Stats.back().DigitsStats);
+					StatsCombiner.CombinePredictionResults(results, plate.Stats.back().DigitsStats);
 
 					results.clear();
 
 					Predictor.Predict(SNNumberRecognizer::LettersAlphabet, symbol, Eval, results);
 					
-					if (plate.Stats.back().LetterStats.empty())
-						plate.Stats.back().LetterStats = results;
-					else
-						StatsCombiner.CombinePredictionResults(results, plate.Stats.back().LetterStats);
+					StatsCombiner.CombinePredictionResults(results, plate.Stats.back().LetterStats);
 					
 					results.clear();
 
@@ -57,8 +54,8 @@ namespace SNNumberRecognizer
 					int r = 0;
 				}
 			}
-
-			StatsCombiner.CombineStats(plate);
+			CalcTotalWeight(plate.Stats);
+			StatsCombiner.CombineStats(plate, frames_to_release);
 		}
 	}
 	//----------------------------------------------------------------------------------
@@ -133,9 +130,29 @@ namespace SNNumberRecognizer
 	}
 	//----------------------------------------------------------------------------------
 
-	void SNPlateRecognizer::CheckResults(const uint64_t& frame_id)
+	void SNPlateRecognizer::CheckResults(const uint64_t& frame_id, SNFramesToRelease& frames_to_release, SNFinalResults& results)
 	{
-		StatsCombiner.CheckResults(ModelMatcher.Model, frame_id);
+		StatsCombiner.CheckResults(ModelMatcher.Model, frame_id, frames_to_release, results);
+	}
+	//----------------------------------------------------------------------------------
+
+	void SNPlateRecognizer::CalcTotalWeight(SNNumberStats& stats)
+	{
+		stats.TotalWeight = 0.0f;
+		for (auto& ss : stats)
+		{
+			for (auto& ds : ss.DigitsStats)
+			{
+				if (ds.Weight > 0)
+					stats.TotalWeight += ds.Weight;
+			}
+
+			for (auto& ls : ss.LetterStats)
+			{
+				if (ls.Weight > 0)
+					stats.TotalWeight += ls.Weight;
+			}
+		}
 	}
 	//----------------------------------------------------------------------------------
 }

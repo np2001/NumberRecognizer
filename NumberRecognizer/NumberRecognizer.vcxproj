@@ -107,45 +107,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Common\SNANNConfigLoader.cpp" />
-    <ClCompile Include="..\Common\SNANNFeatureEvaluator.cpp" />
-    <ClCompile Include="..\Common\SNANNPredictor.cpp" />
-    <ClCompile Include="..\Common\SNStringEncryptor.cpp" />
-    <ClCompile Include="..\Common\tinyxml.cpp" />
-    <ClCompile Include="..\Common\tinyxmlerror.cpp" />
-    <ClCompile Include="..\Common\tinyxmlparser.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="SNFormatMatcher.cpp" />
-    <ClCompile Include="SNImageDebugger.cpp" />
-    <ClCompile Include="SNSegmentor.cpp" />
-    <ClCompile Include="SNModelMatcher.cpp" />
-    <ClCompile Include="SNPlateDetector.cpp" />
-    <ClCompile Include="SNPlateRecognizer.cpp" />
-    <ClCompile Include="SNRecognizer.cpp" />
-    <ClCompile Include="SNStatsCombiner.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\Common\SNANNConfigLoader.h" />
-    <ClInclude Include="..\Common\SNANNFeatureEvaluator.h" />
-    <ClInclude Include="..\Common\SNANNPredictor.h" />
-    <ClInclude Include="..\Common\SNStringEncryptor.h" />
-    <ClInclude Include="..\Common\tinyxml.h" />
-    <ClInclude Include="SNFormatMatcher.h" />
-    <ClInclude Include="SNImageDebugger.h" />
-    <ClInclude Include="SNMasterRecognizerStructs.h" />
-    <ClInclude Include="SNSegmentor.h" />
-    <ClInclude Include="SNModelMatcher.h" />
-    <ClInclude Include="SNPlateDetector.h" />
-    <ClInclude Include="SNPlateRecognizer.h" />
-    <ClInclude Include="SNRecognizer.h" />
-    <ClInclude Include="SNStatsCombiner.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties MocDir=".\GeneratedFiles\$(ConfigurationName)" UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" lupdateOptions="" lupdateOnBuild="0" lreleaseOptions="" Qt5Version_x0020_Win32="4.8.5" MocOptions="" />
+      <UserProperties MocDir=".\GeneratedFiles\$(ConfigurationName)" UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" lupdateOptions="" lupdateOnBuild="0" lreleaseOptions="" Qt5Version_x0020_Win32="4.8.5_x86" MocOptions="" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

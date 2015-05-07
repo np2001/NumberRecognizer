@@ -18,7 +18,7 @@ namespace SNNumberRecognizer
 	std::string SNANNConfigLoader::ToHex(std::string str)
 	{
 		std::string res;
-		for (int i = 0; i < str.size(); ++i)
+		for (size_t i = 0; i < str.size(); ++i)
 		{
 			char c[20];
 			sprintf_s(c, sizeof(c), "%2.2X", str[i]);
@@ -35,18 +35,35 @@ namespace SNNumberRecognizer
 		std::string res;
 		res.reserve(str.size());
 
-		for (int i = 0; i < str.size(); i += 2)
+		for (size_t i = 0; i < str.size(); i += 2)
 		{
-			char src[20];
-			int32_t dst;
-			memcpy(src, str.c_str() + i, 2);
-			src[2] = 0;
-
-			std::stringstream ss;
-			ss << std::hex << src;
-			ss >> dst;
-
-			res += dst;
+			uint8_t d = 0;
+			for (int j = 0; j < 2; ++j)
+			{
+				switch (str[i + j])
+				{
+				case '0': d = ((d << 4) | 0x00); break;
+				case '1': d = ((d << 4) | 0x01); break;
+				case '2': d = ((d << 4) | 0x02); break;
+				case '3': d = ((d << 4) | 0x03); break;
+				case '4': d = ((d << 4) | 0x04); break;
+				case '5': d = ((d << 4) | 0x05); break;
+				case '6': d = ((d << 4) | 0x06); break;
+				case '7': d = ((d << 4) | 0x07); break;
+				case '8': d = ((d << 4) | 0x08); break;
+				case '9': d = ((d << 4) | 0x09); break;
+				case 'A': d = ((d << 4) | 0x0A); break;
+				case 'B': d = ((d << 4) | 0x0B); break;
+				case 'C': d = ((d << 4) | 0x0C); break;
+				case 'D': d = ((d << 4) | 0x0D); break;
+				case 'E': d = ((d << 4) | 0x0E); break;
+				case 'F': d = ((d << 4) | 0x0F); break;
+				default:
+					break;
+				}
+			}
+			
+			res += d;
 		}
 
 		return res;

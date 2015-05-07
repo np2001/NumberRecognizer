@@ -35,8 +35,14 @@ namespace SNNumberRecognizer
 		ANNPredictionResults LetterStats;
 	};
 	//------------------------------------------------------
-	struct SNNumberStats : public std::vector < SNSymbolStats >
+	struct SNNumberStats : public std::vector<SNSymbolStats>
 	{
+		float TotalWeight;
+
+		SNNumberStats()
+		{
+			TotalWeight = 0;
+		}
 	};
 	//------------------------------------------------------
 	
@@ -58,6 +64,7 @@ namespace SNNumberRecognizer
 	struct SNNumberStatsGroup : public std::vector < SNPlate >
 	{
 		uint64_t BestFrameID;
+		float BestWeight;
 		uint64_t LastFrameID;
 
 		cv::Rect BestPlateRect;
@@ -148,27 +155,28 @@ namespace SNNumberRecognizer
 	typedef std::vector<SNPlateModelCenterVector> SNPlateModelCenterVectors;
 	//--------------------------------------------------------------------------
 
-	struct SNNumberRecognizerInputFrame
-	{
-		char* RGB32Image;
-		uint32_t Width;
-		uint32_t Height;
-		uint64_t FrameID;
-		float ROIX;
-		float ROIY;
-		float ROIWidth;
-		float ROIHeight;
-
-		SNNumberRecognizerInputFrame()
-		{
-			ROIX = 0.0f;
-			ROIY = 0.0f;
-			ROIWidth = 1.0f;
-			ROIHeight = 1.0f;
-		}
-	};
-
-	
+	typedef std::list<uint64_t> SNFramesToRelease;
 	//--------------------------------------------------------------------------
+	struct SNFinalResult
+	{
+		uint64_t BestFrameID;
+		cv::Rect BestPlateRect;
+		cv::Mat BestPlate;
+		std::string Number;
+		float Weight;
+	};
+	//--------------------------------------------------------------------------
+	typedef std::list<SNFinalResult> SNFinalResults;
+	//--------------------------------------------------------------------------
+
+	struct SNRecognizerProcessorQuery
+	{
+		SNPlate PlateToRecognize;
+		SNFramesToRelease FramesToRelease;
+		uint64_t LastFrameID;
+		SNFinalResults FinalResults;
+	};
+	//--------------------------------------------------------------------------
+
 }
 #endif // SNNumberDefines_h__

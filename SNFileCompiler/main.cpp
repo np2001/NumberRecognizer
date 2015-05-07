@@ -4,6 +4,7 @@
 #include "../Common/SNStringEncryptor.h"
 #include <QFile>
 #include "QTextStream"
+#include <QtGui/QLabel>
 
 SNStringEncryptor se;
 

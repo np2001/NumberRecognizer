@@ -1,33 +1,53 @@
 #include "SNRecognizer.h"
-#include "..\Common\ann_config.h"
 #include "..\Common\SNStringEncryptor.h"
 #include "..\Common\plate_detector_cascade.h"
 #include "opencv2\imgproc\imgproc.hpp"
 #include "SNImageDebugger.h"
+#include "SNRecognizerProcessor.h"
+
+void* __stdcall SNNumrecCreate()
+{
+	return new SNNumberRecognizer::SNRecognizer();
+};
+//---------------------------------------------------------------------------
+
+void __stdcall SNNumrecDelete(void* instance)
+{
+	SNNumberRecognizer::SNRecognizer* inst = (SNNumberRecognizer::SNRecognizer*)instance;
+	delete inst;
+};
+//---------------------------------------------------------------------------
+
+bool(__stdcall SNNumrecProcess)  (void* instance, char* buffer, int out_width, int out_height)
+{
+	return false;
+};
+//---------------------------------------------------------------------------
 
 namespace SNNumberRecognizer
 {
 	SNRecognizer::SNRecognizer()
 	{
 		SNStringEncryptor se;
-
-		se.Crypt(ann_config);
-
-		PlateRecognizer.InitRecognizer(ann_config);
-
 		se.Crypt(plate_detector_cascade);
 		PlateDetector.LoadCascade((char*)plate_detector_cascade);
 
+		LastFrameID = 0;
+
+		RecProcessor = new SNRecognizerProcessor(this);
 	}
 	//--------------------------------------------------------------
 
 	SNRecognizer::~SNRecognizer()
 	{
+		delete RecProcessor;
 	}
 	//--------------------------------------------------------------
 
 	bool SNRecognizer::Process(const SNNumberRecognizerInputFrame& frame)
 	{
+		LastFrameID = frame.FrameID;
+
 		cv::Rect roi_rect = cv::Rect(frame.ROIX * frame.Width, frame.ROIY * frame.Height, frame.ROIWidth * frame.Width, frame.ROIHeight * frame.Height);
 
 		cv::Mat image = cv::Mat(frame.Height, frame.Width, CV_8UC4, frame.RGB32Image);
@@ -45,29 +65,96 @@ namespace SNNumberRecognizer
 
 		bool retain_image = plates.size() > 0;
 
+		Mutex.lock();
 		for (auto& plate : plates)
 		{
 			NotRecognizedPlates.push_back(plate);
 		}
 
-		if (retain_image)
-			ImageRetainMap[frame.FrameID] += plates.size();
+		Mutex.unlock();
 
-		RecognizePlates();
-		PlateRecognizer.CheckResults(frame.FrameID);
+		if (retain_image)
+		{
+			ImageRetainMap[frame.FrameID] += plates.size();
+			char c[100];
+			sprintf_s(c, 100, "Image retained. Left: %i\r\n", ImageRetainMap.size());
+			OutputDebugStringA(c);
+		}
+		
+		ReleaseFrames();
+
+		for (auto fr : FinalResults)
+		{
+			if (fr.Weight > 10)
+			{
+				OutputDebugStringA("Final result\r\n");
+
+				char c[100];
+				sprintf_s(c, 100, "%s %2.2f\r\n", fr.Number.c_str(), fr.Weight);
+				OutputDebugStringA(c);
+			}
+		}
+
+		FinalResults.clear();
 
 		return retain_image;
 	}
 	//--------------------------------------------------------------
 
-	void SNRecognizer::RecognizePlates()
-	{
-		while (!NotRecognizedPlates.empty())
+	void SNRecognizer::ReleaseFrames()
+{
+		for (auto& f : FramesToRelease)
 		{
-			SNNumberVariants variants;
-			PlateRecognizer.RecognizePlate(NotRecognizedPlates.front(), variants);
-			NotRecognizedPlates.pop_front();
+			auto i = ImageRetainMap.find(f);
+			if (i != ImageRetainMap.end())
+			{
+				i->second--;
+				if (i->second == 0)
+				{
+					char c[100];
+					sprintf_s(c, 100, "Image released. Left: %i\r\n", ImageRetainMap.size() - 1);
+					OutputDebugStringA(c);
+					ImageRetainMap.erase(i);
+				}
+			}
+			else
+			{
+				OutputDebugStringA("No frame to release\r\n");
+			}
 		}
+
+		FramesToRelease.clear();
+	}
+	//--------------------------------------------------------------
+
+	bool SNRecognizer::GetPlateToRecognize(SNRecognizerProcessorQuery& query)
+	{
+		bool res = false;
+		Mutex.lock();
+		
+		query.LastFrameID = LastFrameID;
+
+		for (auto& ftr : query.FramesToRelease)
+		{
+			FramesToRelease.push_back(ftr);
+		}
+
+		for (auto& fr : query.FinalResults)
+		{
+			FinalResults.push_back(fr);
+		}
+
+		if (!NotRecognizedPlates.empty())
+		{
+			query.PlateToRecognize = NotRecognizedPlates.front();
+			NotRecognizedPlates.pop_front();
+
+			res = true;
+		}
+
+		Mutex.unlock();
+
+		return res;
 	}
 	//--------------------------------------------------------------
 };

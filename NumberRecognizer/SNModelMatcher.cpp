@@ -77,7 +77,7 @@ namespace SNNumberRecognizer
 
 		//out_model.push_back(r1);
 
-		for (int i = 0; i < Model.size(); ++i)
+		for (size_t i = 0; i < Model.size(); ++i)
 		{
 			cv::Point2f scaled_cv = CenterVectors[i].Vector * scale_ratio;
 
@@ -103,7 +103,7 @@ namespace SNNumberRecognizer
 	{
 		cv::Mat out_image;
 		cvtColor(gray_image, out_image, CV_GRAY2RGB);
-	cv:resize(out_image, out_image, out_image.size() * scale);
+		cv::resize(out_image, out_image, out_image.size() * scale);
 
 		for (auto m : out_model)
 		{
@@ -116,8 +116,6 @@ namespace SNNumberRecognizer
 	}
 	//------------------------------------------------------
 
-
-
 	cv::Point2f SNModelMatcher::AffineTransform(const cv::Point2f& p, const cv::Mat& trans_mat)
 	{
 		cv::Mat x = cv::Mat(3, 1, CV_64FC1);
@@ -129,7 +127,7 @@ namespace SNNumberRecognizer
 
 		return cv::Point2f(lt.at<double>(0), lt.at<double>(1));
 	}
-
+	//------------------------------------------------------
 
 	bool SNModelMatcher::MatchModel2(const cv::Mat& gray_image, SNFigureGroups& fgs, SNPlateModel& out_model, int32_t& best_group_to_start)
 	{
@@ -162,7 +160,7 @@ namespace SNNumberRecognizer
 				float compare_ratio_sum = 0.0f;
 				int compare_ratio_count = 0;
 
-				for (int k = 0; k < Model.size(); ++k)
+				for (size_t k = 0; k < Model.size(); ++k)
 				{
 					cv::Point2f tl = AffineTransform(cv::Point2f(Model[k].SymbolRect.tl()), trans_mat);
 					cv::Point2f br = AffineTransform(cv::Point2f(Model[k].SymbolRect.br()), trans_mat);
@@ -201,6 +199,7 @@ namespace SNNumberRecognizer
 
 		return true;
 	}
+	//------------------------------------------------------
 
 	bool SNModelMatcher::MatchModel3(SNPlate& plate, SNPlateModels& out_models)
 	{

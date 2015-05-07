@@ -20,7 +20,7 @@ namespace SNNumberRecognizer
 		if (stats.size() < format.size())
 			return;
 
-		for (int j = 0; j < format.size(); ++j)
+		for (size_t j = 0; j < format.size(); ++j)
 		{
 			float weight = 0.0f;
 			char best_char = '*';

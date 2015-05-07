@@ -1,22 +1,20 @@
 
 #include <QtCore/QCoreApplication>
-#include <opencv2/highgui/highgui.hpp>
 #include <QFile>
 #include <QTextStream>
-#include <opencv2/imgproc/imgproc.hpp>
 #include <QTime>
 #include <iostream>
-#include "../Common/SNNumberRecognizerDefines.h"
 #include <QDebug>
-#include "SNRecognizer.h"
-
-SNNumberRecognizer::SNRecognizer nr;
+#include "opencv2/highgui/highgui.hpp"
+#include <stdint.h>
+#include "SNNumrecInterface.h"
+#include <opencv2/imgproc/imgproc.hpp>
 
 int main(int argc, char *argv[])
 {
 	QCoreApplication a(argc, argv);
 
-	cv::VideoCapture capture("e:/MailCloud/video_data_base/autonumbers/russia/Êטלנû.avi");
+	cv::VideoCapture capture("f:/MailCloud/video_data_base/autonumbers/russia/Êטלנû.avi");
 
 	cv::Mat frame;
 	
@@ -26,7 +24,7 @@ int main(int argc, char *argv[])
 
 	uint64_t frame_id = 0;
 
-	SNNumberRecognizer::SNNumberRecognizerInputFrame frame2;
+	SNNumberRecognizerInputFrame frame2;
 	frame2.FrameID = 0;
 
 	if (capture.isOpened())
@@ -60,7 +58,7 @@ int main(int argc, char *argv[])
 				frame2.ROIWidth = 1.0;
 				frame2.ROIHeight = 1.0;
 
-				nr.Process(frame2);
+				//nr.Process(frame2);
 
 				/*cv::resize(plate_image, plate_image, plate_image.size() * 4);
 

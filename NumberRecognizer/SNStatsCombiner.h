@@ -11,8 +11,8 @@ namespace SNNumberRecognizer
 	public:
 		SNStatsCombiner();
 		~SNStatsCombiner();
-		void CombineStats(const SNPlate& plate);
-		void CheckResults(const SNPlateModel& model, const uint64_t frame_id);
+		void CombineStats(const SNPlate& plate, SNFramesToRelease& frames_to_release);
+		void CheckResults(const SNPlateModel& model, const uint64_t frame_id, SNFramesToRelease& frames_to_release, SNFinalResults& results);
 		void CombinePredictionResults(const ANNPredictionResults& src, ANNPredictionResults& dst);
 
 	private:

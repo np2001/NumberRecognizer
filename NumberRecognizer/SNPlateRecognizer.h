@@ -17,11 +17,13 @@ namespace SNNumberRecognizer
 	public:
 		SNPlateRecognizer();
 		~SNPlateRecognizer();
-		void RecognizePlate(SNPlate& plate, SNNumberVariants& variants);
+		void RecognizePlate(SNPlate& plate, SNNumberVariants& variants, SNFramesToRelease& frames_to_release);
 		bool InitRecognizer(const char* config);
-		void CheckResults(const uint64_t& frame_id);
+		void CheckResults(const uint64_t& frame_id, SNFramesToRelease& frames_to_release, SNFinalResults& results);
+		
 	private:
 		std::string RecognizeRegion(const cv::Mat& gray_image, const SNPlateModel& best_plate_model);
+		void CalcTotalWeight(SNNumberStats& stats);
 	private:
 		SNANNConfigLoader ConfigLoader;
 		SNANNPredictor Predictor;
@@ -33,5 +35,7 @@ namespace SNNumberRecognizer
 	};
 }
 //---------------------------------------------------------------------
+
+
 
 #endif // SNPlateRecognizer_h__
